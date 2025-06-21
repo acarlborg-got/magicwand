@@ -1,0 +1,1211 @@
+modConfig:
+
+' === modConfig – Versionshantering & formulärtitlar ===
+
+Option Explicit
+
+Public Const APP_VERSION As String = "v0.3 [Dev]"
+
+Public Function GetAppVersion() As String
+    GetAppVersion = "MagicWand " & APP_VERSION
+End Function
+
+Public Function GetTitle_frmIndexBrowser() As String
+    GetTitle_frmIndexBrowser = ":: MagicWand | Index folders"
+End Function
+
+Public Function GetTitle_frmReplaceTool() As String
+    GetTitle_frmReplaceTool = ":: MagicWand | Search & Replace"
+End Function
+
+modFileUtils:
+
+
+Option Explicit
+
+' Returnerar basnamn utan filändelse
+Function GetBaseName(filePath As String) As String
+    Dim fso As Object
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    GetBaseName = fso.GetBaseName(filePath)
+End Function
+
+' Returnerar mappens namn från en full sökväg
+Function GetFolderName(path As String) As String
+    Dim fso As Object
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    GetFolderName = fso.GetParentFolderName(path)
+End Function
+
+' Skapar mapp om den inte finns
+Sub EnsureFolderExists(folderPath As String)
+    Dim fso As Object
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    If Not fso.FolderExists(folderPath) Then
+        fso.CreateFolder folderPath
+    End If
+End Sub
+
+' Skapar en loggfil och returnerar filnummer
+Public Function CreateLogFile(logPath As String) As Integer
+    Dim fileNum As Integer
+    fileNum = FreeFile
+    Open logPath For Output As #fileNum
+    CreateLogFile = fileNum
+End Function
+
+' Lägger till en rad i en loggfil
+Sub AppendToLog(fileNum As Integer, message As String)
+    Print #fileNum, Now & " - " & message
+End Sub
+
+modIndex:
+
+Public Sub IndexFoldersAndFiles(rootPath As String)
+    Dim fso As Object, stack As Collection
+    Dim folder As Object, file As Object, subFolder As Object
+    Dim folderCount As Long, fileCount As Long, folderDepth As Long
+
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set stack = New Collection
+    stack.Add rootPath
+
+    folderCount = 0: fileCount = 0
+    ReDim IndexedFolders(0)
+    ReDim IndexedFiles(0)
+
+    Do While stack.count > 0
+        Dim currentPath As String
+        currentPath = stack(1)
+        stack.Remove 1
+
+        folderDepth = UBound(Split(currentPath, "\")) - UBound(Split(rootPath, "\"))
+
+        ReDim Preserve IndexedFolders(folderCount)
+        With IndexedFolders(folderCount)
+            .ID = folderCount
+            .folderPath = currentPath
+            .depth = folderDepth
+            .selected = False
+        End With
+        folderCount = folderCount + 1
+
+        Set folder = fso.GetFolder(currentPath)
+        For Each file In folder.files
+            If LCase(Right(file.Name, 5)) = ".docx" Or LCase(Right(file.Name, 4)) = ".doc" Then
+                ReDim Preserve IndexedFiles(fileCount)
+                With IndexedFiles(fileCount)
+                    .ID = fileCount
+                    .filePath = file.path
+                    .fileName = file.Name
+                    .extension = fso.GetExtensionName(file.Name)
+                    .parentFolderID = folderCount - 1
+                    .lastModified = file.DateLastModified
+                    .selected = False
+                End With
+                fileCount = fileCount + 1
+            End If
+        Next
+
+        For Each subFolder In folder.SubFolders
+            stack.Add subFolder.path
+        Next
+    Loop
+End Sub
+
+Public Function GetIndexedFolderName(fullPath As String) As String
+    GetIndexedFolderName = Mid(fullPath, InStrRev(fullPath, "\") + 1)
+End Function
+
+modShared:
+
+Public Function GetIndexedFiles() As Variant
+    GetIndexedFiles = selectedFiles  ' tFileSelection() från frmIndexBrowser
+End Function
+' === modIndexShared – Delning av sparat urval mellan formulär ===
+Option Explicit
+
+' Sparade urval från frmIndexBrowser
+Public selectedFiles() As tFileSelection
+Public selectedFolders() As IndexedFolder
+
+' Returnerar urvalet av filer
+Public Function GetSelectedFiles() As tFileSelection()
+    GetSelectedFiles = selectedFiles
+End Function
+
+' Returnerar urvalet av mappar
+Public Function GetSelectedFolders() As IndexedFolder()
+    GetSelectedFolders = selectedFolders
+End Function
+
+' Returnerar fullständiga sökvägar till valda filer
+Public Function GetSelectedFilePaths() As String()
+    Dim result() As String
+    Dim i As Long, j As Long
+    Dim fname As String, pid As Long
+    Dim found As Boolean
+    Dim fCount As Long
+
+    If (Not Not selectedFiles) = False Then
+        ReDim result(0)
+        result(0) = ""
+        GetSelectedFilePaths = result
+        Exit Function
+    End If
+
+    fCount = UBound(selectedFiles) + 1
+    ReDim result(fCount - 1)
+
+    For i = 0 To UBound(selectedFiles)
+        fname = selectedFiles(i).fileName
+        pid = selectedFiles(i).parentID
+        found = False
+
+        For j = 0 To UBound(IndexedFiles)
+            If IndexedFiles(j).fileName = fname And IndexedFiles(j).parentFolderID = pid Then
+                result(i) = IndexedFiles(j).filePath
+                found = True
+                Exit For
+            End If
+        Next j
+
+        If Not found Then
+            result(i) = "MISSING: " & fname
+        End If
+    Next i
+
+    GetSelectedFilePaths = result
+End Function
+' Returnerar hela IndexedFile-objekt för valda filer
+Public Function GetSelectedIndexedFiles() As IndexedFile()
+    Dim result() As IndexedFile
+    Dim i As Long, j As Long
+    Dim count As Long: count = 0
+
+    If (Not Not selectedFiles) = False Then
+        ReDim result(0)
+        GetSelectedIndexedFiles = result
+        Exit Function
+    End If
+
+    For i = 0 To UBound(selectedFiles)
+        For j = 0 To UBound(IndexedFiles)
+            If IndexedFiles(j).fileName = selectedFiles(i).fileName And _
+               IndexedFiles(j).parentFolderID = selectedFiles(i).parentID Then
+
+                ReDim Preserve result(count)
+                result(count) = IndexedFiles(j)
+                count = count + 1
+                Exit For
+            End If
+        Next j
+    Next i
+
+    GetSelectedIndexedFiles = result
+End Function
+
+modLauncher:
+
+Option Explicit
+
+Sub ShowReplaceTool()
+    frmIndexBrowser.Show
+End Sub
+
+modMain:
+
+Option Explicit
+
+Public cancelRequested As Boolean
+
+Public Sub StartProcessing()
+    Dim findTexts(1 To 5) As String
+    Dim replaceTexts(1 To 5) As String
+    Dim caseFlags(1 To 5) As Boolean
+    Dim wordFlags(1 To 5) As Boolean
+    Dim i As Long
+
+    For i = 1 To 5
+        findTexts(i) = Me.Controls("txtFind" & i).Text
+        replaceTexts(i) = Me.Controls("txtReplace" & i).Text
+        caseFlags(i) = Me.Controls("chkCase" & i).Value
+        wordFlags(i) = Me.Controls("chkWhole" & i).Value
+    Next i
+
+    ProcessIndexedDocuments findTexts, replaceTexts, caseFlags, wordFlags, _
+        Me.chkExportPDF.Value, Me.cmbPDFType.Text, Me.txtAltPDFPath.Text, _
+        Me.txtPrefix.Text, Me.txtSuffix.Text, Me.chkKeepOriginal.Value, _
+        Me.cmbLanguage.Text
+End Sub
+
+
+modReplace:
+
+' === modReplace – Behandling av filer från index ===
+Option Explicit
+
+Public Sub ProcessIndexedDocuments(findTexts() As String, replaceTexts() As String, _
+    caseFlags() As Boolean, wordFlags() As Boolean, exportPDF As Boolean, exportPDFType As String, _
+    altPDFPath As String, prefix As String, suffix As String, keepOriginal As Boolean, language As String)
+
+    Dim fileList() As IndexedFile
+    fileList = GetSelectedIndexedFiles()
+    If (Not Not fileList) = False Then
+        MsgBox "Inga filer har valts i index.", vbExclamation
+        Exit Sub
+    End If
+
+    Dim i As Long, totalReplacements As Long, fileCount As Long
+    Dim doc As Document
+    Dim logFile As Integer, errorLogFile As Integer
+    Dim logPath As String, errorLogPath As String
+    Dim baseFolder As String
+
+    baseFolder = GetBaseFolder(fileList)
+    logPath = baseFolder & "\MagicWand_Log.txt"
+    errorLogPath = baseFolder & "\MagicWand_Errors.txt"
+    logFile = CreateLogFile(logPath)
+    errorLogFile = CreateLogFile(errorLogPath)
+
+    For i = 0 To UBound(fileList)
+        DoEvents
+        If cancelRequested Then Exit For
+
+        On Error GoTo HandleError
+
+        fileCount = fileCount + 1
+        UpdateStatus "Processing", fileList(i).fileName, "Files: " & fileCount
+        UpdateProgress fileCount / (UBound(fileList) + 1)
+
+        Set doc = Documents.Open(fileList(i).filePath, ReadOnly:=False, Visible:=False)
+
+        Dim j As Long, replacementsInDoc As Long
+        For j = 1 To 5
+            If findTexts(j) <> "" Then
+                Dim rep As Long
+                rep = ReplaceAll(doc, findTexts(j), replaceTexts(j), caseFlags(j), wordFlags(j))
+                totalReplacements = totalReplacements + rep
+                replacementsInDoc = replacementsInDoc + rep
+            End If
+        Next j
+
+        If keepOriginal Then
+            Dim preservePath As String
+            preservePath = fileList(i).filePath & "_originals"
+            preservePath = Left(preservePath, InStrRev(preservePath, "\") - 1) & "\_originals"
+            EnsureFolderExists preservePath
+            doc.SaveAs2 preservePath & "\" & prefix & GetBaseName(fileList(i).fileName) & suffix & ".docx"
+        Else
+            doc.Save
+        End If
+
+        If exportPDF And (Not frmReplaceTool.chkExportPDFOnly.Value Or replacementsInDoc > 0) Then
+            Dim exportPath As String, pdfPath As String
+            exportPath = IIf(altPDFPath <> "", altPDFPath, Left(fileList(i).filePath, InStrRev(fileList(i).filePath, "\") - 1))
+            EnsureFolderExists exportPath
+            pdfPath = exportPath & "\" & prefix & GetBaseName(fileList(i).fileName) & suffix & ".pdf"
+
+            doc.ExportAsFixedFormat OutputFileName:=pdfPath, ExportFormat:=wdExportFormatPDF, _
+                OpenAfterExport:=False, OptimizeFor:=wdExportOptimizeForPrint, _
+                CreateBookmarks:=wdExportCreateNoBookmarks, _
+                UseISO19005_1:=IIf(exportPDFType = "PDF/A-1b", True, False)
+        End If
+
+        AppendToLog logFile, "Processed: " & fileList(i).filePath
+        doc.Close SaveChanges:=False
+ContinueLoop:
+    Next i
+
+    Close #logFile
+    Close #errorLogFile
+
+    UpdateProgress 1
+    UpdateStatus "Done", , "Processed: " & fileCount & " | Replacements: " & totalReplacements
+    MsgBox "Behandling klar. Loggar sparade i: " & baseFolder, vbInformation
+    Exit Sub
+
+HandleError:
+    If Not doc Is Nothing Then On Error Resume Next: doc.Close SaveChanges:=False
+    AppendToLog errorLogFile, "Error in file: " & fileList(i).filePath & " - " & err.Description
+    Resume ContinueLoop
+End Sub
+
+Private Function ReplaceAll(doc As Document, findText As String, replaceText As String, _
+    caseSensitive As Boolean, wholeWord As Boolean) As Long
+
+    Dim rng As Range, count As Long
+    For Each rng In doc.StoryRanges
+        Do
+            count = count + ReplaceInRange(rng, findText, replaceText, caseSensitive, wholeWord)
+            Set rng = rng.NextStoryRange
+        Loop Until rng Is Nothing
+    Next
+
+    Dim shp As Shape
+    For Each shp In doc.Shapes
+        If shp.TextFrame.HasText Then
+            count = count + ReplaceInRange(shp.TextFrame.TextRange, findText, replaceText, caseSensitive, wholeWord)
+        End If
+    Next
+
+    ReplaceAll = count
+End Function
+
+Private Function ReplaceInRange(rng As Range, findText As String, replaceText As String, _
+    caseSensitive As Boolean, wholeWord As Boolean) As Long
+
+    Dim count As Long, found As Boolean
+
+    With rng.Find
+        .ClearFormatting
+        .Replacement.ClearFormatting
+        .Text = findText
+        .Replacement.Text = ""
+        .Forward = True
+        .Wrap = wdFindStop
+        .Format = False
+        .MatchCase = caseSensitive
+        .MatchWholeWord = wholeWord
+    End With
+
+    Do
+        found = rng.Find.Execute
+        If found Then
+            Dim matchRange As Range
+            Set matchRange = rng.Duplicate
+            matchRange.Text = replaceText
+            count = count + 1
+            rng.Start = matchRange.End
+            rng.End = rng.StoryLength
+        End If
+    Loop While found
+
+    ReplaceInRange = count
+End Function
+
+Private Function GetBaseFolder(files() As IndexedFile) As String
+    If UBound(files) >= 0 Then
+        GetBaseFolder = Left(files(0).filePath, InStrRev(files(0).filePath, "\") - 1)
+    Else
+        GetBaseFolder = ThisDocument.path
+    End If
+End Function
+
+modSpellCheck:
+
+Option Explicit
+
+Public Sub PreScanSpelling(filePaths() As String, language As String, preserveFolderName As String)
+    Dim fallbackLangID As Long
+    Select Case LCase(language)
+        Case "svenska": fallbackLangID = 1053
+        Case "english", "engelska": fallbackLangID = 2057
+        Case Else: fallbackLangID = 2057
+    End Select
+
+    Dim spellingDict As Object
+    Set spellingDict = CreateObject("Scripting.Dictionary")
+
+    Dim fileCount As Long
+    frmReplaceTool.lstSpellingResult.Clear
+    UpdateStatus "Spellcheck", , "Scanning documents..."
+
+    Dim i As Long
+    For i = 0 To UBound(filePaths)
+        If LCase(Right(filePaths(i), 5)) = ".docx" Or LCase(Right(filePaths(i), 4)) = ".doc" Then
+            On Error GoTo SkipFile
+            fileCount = fileCount + 1
+            UpdateStatus "Spellcheck – " & filePaths(i), , "File " & fileCount
+            UpdateProgress 0.01 * (fileCount Mod 100)
+
+            Dim doc As Document, err As Object, wordKey As String
+            Set doc = Documents.Open(filePaths(i), ReadOnly:=True, Visible:=False)
+            doc.Content.LanguageID = fallbackLangID
+
+            For Each err In doc.SpellingErrors
+                wordKey = LCase(Trim(err.Text))
+                If Len(wordKey) > 1 Then
+                    If spellingDict.Exists(wordKey) Then
+                        spellingDict(wordKey) = spellingDict(wordKey) + 1
+                    Else
+                        spellingDict.Add wordKey, 1
+                    End If
+                    UpdateSpellingListLive spellingDict
+                End If
+            Next
+            doc.Close SaveChanges:=False
+SkipFile:
+            On Error GoTo 0
+        End If
+    Next i
+
+    Dim count As Long: count = spellingDict.count
+    If count = 0 Then
+        UpdateStatus "Spellcheck complete", , "No misspellings found."
+        UpdateProgress 1
+        MsgBox "No spelling errors found in the scanned files.", vbInformation
+        Exit Sub
+    End If
+
+    Dim keys() As String, values() As Long
+    ReDim keys(0 To count - 1)
+    ReDim values(0 To count - 1)
+
+    Dim k As Long
+    For k = 0 To count - 1
+        keys(k) = spellingDict.keys()(k)
+        values(k) = spellingDict.Items()(k)
+    Next k
+
+    Dim j As Long, tempKey As String, tempVal As Long
+    For i = 0 To count - 2
+        For j = i + 1 To count - 1
+            If values(j) > values(i) Then
+                tempVal = values(i): values(i) = values(j): values(j) = tempVal
+                tempKey = keys(i): keys(i) = keys(j): keys(j) = tempKey
+            End If
+        Next j
+    Next i
+
+    For i = 0 To Min(4, count - 1)
+        frmReplaceTool.Controls("txtFind" & (i + 1)).Text = keys(i)
+        frmReplaceTool.Controls("txtReplace" & (i + 1)).Text = GetSuggestion(keys(i), fallbackLangID)
+        SetFieldOptionsForIndex keys(i), i + 1
+    Next i
+
+    Dim statsText As String
+    statsText = "Files scanned: " & fileCount & " | Unique misspellings: " & count
+    UpdateStatus "Spellcheck complete", , statsText
+    MsgBox "Spellcheck completed." & vbCrLf & statsText, vbInformation
+
+    Dim logPath As String
+    logPath = Environ("TEMP") & "\MagicWand_Spelling.txt"
+    Dim fnum As Integer: fnum = FreeFile
+    Open logPath For Output As #fnum
+    Print #fnum, "MagicWand Spelling Log"
+    Print #fnum, "Date: " & Format(Now, "yyyy-mm-dd HH:nn:ss")
+    Print #fnum, "Scanned files: " & fileCount
+    Print #fnum, "Unique misspellings: " & count
+    Print #fnum, ""
+    For i = 0 To count - 1
+        Print #fnum, keys(i) & vbTab & values(i)
+    Next i
+    Close #fnum
+
+    UpdateProgress 1
+End Sub
+
+Private Sub ScanSpellingRecursive(folder As Object, fallbackLangID As Long, _
+                                  ByRef dict As Object, ByRef fileCount As Long, _
+                                  includeSubfolders As Boolean, preserveFolderName As String)
+
+    If LCase(folder.Name) = LCase(preserveFolderName) Then Exit Sub
+
+    Dim file As Object, subFolder As Object
+    Dim doc As Document, err As Object, wordKey As String
+
+    For Each file In folder.files
+        If LCase(Right(file.Name, 5)) = ".docx" Or LCase(Right(file.Name, 4)) = ".doc" Then
+            On Error GoTo SkipFile
+            fileCount = fileCount + 1
+            UpdateStatus "Spellcheck – " & file.Name, , "File " & fileCount
+            UpdateProgress 0.01 * (fileCount Mod 100)
+
+            Set doc = Documents.Open(file.path, ReadOnly:=True, Visible:=False)
+            doc.Content.LanguageID = fallbackLangID
+
+            For Each err In doc.SpellingErrors
+                wordKey = LCase(Trim(err.Text))
+                If Len(wordKey) > 1 Then
+                    If dict.Exists(wordKey) Then
+                        dict(wordKey) = dict(wordKey) + 1
+                    Else
+                        dict.Add wordKey, 1
+                    End If
+                    UpdateSpellingListLive dict
+                End If
+            Next
+
+            doc.Close SaveChanges:=False
+        End If
+SkipFile:
+        On Error GoTo 0
+    Next
+
+    If includeSubfolders Then
+        For Each subFolder In folder.SubFolders
+            ScanSpellingRecursive subFolder, fallbackLangID, dict, fileCount, _
+                                  includeSubfolders, preserveFolderName
+        Next
+    End If
+End Sub
+
+Private Sub UpdateSpellingListLive(dict As Object)
+    Dim count As Long: count = dict.count
+    If count = 0 Then Exit Sub
+
+    Dim keys() As String, values() As Long
+    ReDim keys(0 To count - 1)
+    ReDim values(0 To count - 1)
+
+    Dim i As Long, j As Long
+    For i = 0 To count - 1
+        keys(i) = dict.keys()(i)
+        values(i) = dict.Items()(i)
+    Next i
+
+    Dim tempK As String, tempV As Long
+    For i = 0 To count - 2
+        For j = i + 1 To count - 1
+            If values(j) > values(i) Then
+                tempV = values(i): values(i) = values(j): values(j) = tempV
+                tempK = keys(i): keys(i) = keys(j): keys(j) = tempK
+            End If
+        Next j
+    Next i
+
+    With frmReplaceTool.lstSpellingResult
+        .Clear
+        For i = 0 To Min(99, count - 1)
+            .AddItem keys(i) & " (" & values(i) & ")"
+        Next i
+    End With
+End Sub
+
+Private Sub SetFieldOptionsForIndex(word As String, index As Long)
+    Dim allText As String: allText = ActiveDocument.Content.Text
+
+    If InStr(1, allText, LCase(word)) > 0 And InStr(1, allText, UCase(word)) > 0 Then
+        frmReplaceTool.Controls("chkCase" & index).Value = False
+    Else
+        frmReplaceTool.Controls("chkCase" & index).Value = True
+    End If
+
+    If RegexMatch(allText, "[a-zA-ZåäöÅÄÖ]" & word & "[a-zA-ZåäöÅÄÖ]") Then
+        frmReplaceTool.Controls("chkWhole" & index).Value = False
+    Else
+        frmReplaceTool.Controls("chkWhole" & index).Value = True
+    End If
+End Sub
+
+Private Function GetSuggestion(word As String, langID As Long) As String
+    Dim doc As Document
+    Dim rng As Range
+    Dim suggestion As String
+
+    Set doc = Application.Documents.Add(Visible:=False)
+    Set rng = doc.Range
+    rng.Text = word
+
+    rng.LanguageID = langID
+    rng.Paragraphs(1).Range.LanguageID = langID
+
+    If Not Application.CheckSpelling(rng.Text, , , langID) Then
+        If doc.SpellingErrors.count > 0 Then
+            Dim suggestions As Object
+            Set suggestions = doc.SpellingErrors(1).GetSpellingSuggestions
+            If Not suggestions Is Nothing Then
+                If suggestions.count > 0 Then
+                    suggestion = suggestions(1)
+                End If
+            End If
+        End If
+    End If
+
+    doc.Close SaveChanges:=False
+
+    If suggestion = "" Then
+        GetSuggestion = word
+    Else
+        GetSuggestion = suggestion
+    End If
+End Function
+
+Private Function RegexMatch(ByVal inputText As String, ByVal pattern As String) As Boolean
+    Dim re As Object
+    Set re = CreateObject("VBScript.RegExp")
+    re.pattern = pattern
+    re.IgnoreCase = True
+    re.Global = False
+    RegexMatch = re.Test(inputText)
+End Function
+
+Private Function Min(a As Long, b As Long) As Long
+    If a < b Then Min = a Else Min = b
+End Function
+
+modTypes:
+
+' ========================================
+' modTypes – Globala typer för indexering
+' ========================================
+
+Option Explicit
+
+' === Komplett metadata för varje fil i index ===
+Public Type IndexedFile
+    ID As Long
+    filePath As String
+    fileName As String
+    parentFolderID As Long
+    extension As String
+    lastModified As Date
+    selected As Boolean
+End Type
+
+' === Mappstruktur med djup ===
+Public Type IndexedFolder
+    ID As Long
+    folderPath As String
+    selected As Boolean
+    depth As Long
+End Type
+
+' === Endast sparat urval: filnamn + mappreferens ===
+Public Type tFileSelection
+    fileName As String
+    parentID As Long
+End Type
+
+' === Globala arrayer ===
+Public IndexedFolders() As IndexedFolder
+Public IndexedFiles() As IndexedFile
+
+' För mapplistan med indrag (UI)
+Public DisplayedFolderIDs() As Long
+
+' Sparat urval – exporteras till andra formulär
+Public selectedFolders() As IndexedFolder
+Public selectedFiles() As tFileSelection
+
+modUtils:
+
+Option Explicit
+' ##############################################
+' ## Statusuppdatering i formulär
+' ##############################################
+Public Sub UpdateStatus(statusText As String, Optional progressText As String = "", Optional statsText As String = "")
+    On Error Resume Next
+    If VBA.UserForms.count > 0 Then
+        With frmReplaceTool
+            ' Om statusText är sammansatt i formatet: "Nivå – Filnamn | Meddelande"
+            Dim state As String, fileName As String, message As String
+            Dim parts() As String, subParts() As String
+            
+            If InStr(statusText, " – ") > 0 Or InStr(statusText, "|") > 0 Then
+                ' Tolka uppdelat statusmeddelande
+                parts = Split(statusText, "|")
+                subParts = Split(parts(0), "–")
+                state = Trim(subParts(0))
+                If UBound(subParts) > 0 Then fileName = Trim(subParts(1))
+                If UBound(parts) > 0 Then message = Trim(parts(1))
+                
+                .lblStatus2.Caption = state
+                If fileName <> "" Then .lblProgress.Caption = fileName
+                If message <> "" Then .lblStats.Caption = message
+            Else
+                ' Använd gamla formatet
+                If statusText <> "" Then .lblStatus2.Caption = statusText
+                If progressText <> "" Then .lblProgress.Caption = progressText
+                If statsText <> "" Then .lblStats.Caption = statsText
+            End If
+            
+            DoEvents
+        End With
+    End If
+End Sub
+
+' ##############################################
+' ## Statusbar i formulär
+' ##############################################
+Public Sub UpdateProgress(progress As Double)
+    On Error Resume Next
+    If VBA.UserForms.count > 0 Then
+        With frmReplaceTool
+            If progress < 0 Then progress = 0
+            If progress > 1 Then progress = 1
+            .lblProgressBar.Width = 474 * progress ' Anpassa till faktisk bredd
+            DoEvents
+        End With
+    End If
+End Sub
+
+modValidate:
+
+Public Function ValidateProcessingSettings() As Boolean
+    With frmReplaceTool
+        ' Default to valid
+        ValidateProcessingSettings = True
+
+        ' ?? Preserve original + no way to separate modified files
+        If .chkKeepOriginal.Value = True Then
+            If Trim(.txtPreserveSubFolder.Text) = "" And _
+               Trim(.txtPrefix.Text) = "" And Trim(.txtSuffix.Text) = "" Then
+                MsgBox "Preserve original is enabled, but no prefix, suffix, or subfolder is defined." & vbCrLf & _
+                       "To avoid overwriting the original files, you must define at least one.", vbExclamation, "Invalid Settings"
+                ValidateProcessingSettings = False
+                Exit Function
+            End If
+        Else
+            ' ? Overwrite warning
+            If MsgBox("You are about to overwrite original Word files." & vbCrLf & _
+                      "Are you sure you want to continue?", vbYesNo + vbCritical, "Confirm Overwrite") = vbNo Then
+                ValidateProcessingSettings = False
+                Exit Function
+            End If
+        End If
+    End With
+End Function
+
+
+frmIndexBrowser:
+
+
+' === Modulnivåtyper ===
+Private Type tFileSelection
+    fileName As String
+    parentID As Long
+    filePath As String
+End Type
+
+Private selectedFiles() As tFileSelection
+Private selectedFolders() As IndexedFolder
+Private DisplayedFolderIDs() As Long
+
+Private Sub cmbNextForm_Change()
+
+End Sub
+
+Private Sub Label1_Click()
+
+End Sub
+
+Private Sub lblAuthor_Click()
+    ' Öppna Teams chatt
+    ThisDocument.FollowHyperlink "https://teams.microsoft.com/l/chat/0/0?users=alexander.carlborg@afry.com"
+End Sub
+
+Private Sub txtRootFolder_Change()
+
+End Sub
+
+Private Sub UserForm_Initialize()
+    Me.Caption = GetTitle_frmIndexBrowser()
+    lblAppVersion.Caption = GetAppVersion()
+
+    ' Initiera nästa-formular lista
+    With cmbNextForm
+        .AddItem "Search & Replace"
+        .AddItem "Metadata injection"
+        .AddItem "Format cleanup"
+    End With
+    ' UI-kontroller
+    btnGo.Enabled = False
+    btnGo.BackColor = vbWhite
+End Sub
+
+
+' === Browse-klick ===
+Private Sub btnBrowseFolder_Click()
+    With Application.FileDialog(msoFileDialogFolderPicker)
+        If .Show = -1 Then txtRootFolder.Text = .SelectedItems(1)
+    End With
+End Sub
+
+' === Index-klick ===
+Private Sub btnLoad_Click()
+    If txtRootFolder.Text = "" Then Exit Sub
+    Call IndexFoldersAndFiles(txtRootFolder.Text)
+    Call BuildFolderList
+    Call UpdateFilesFromSelectedFolders
+    Call UpdateStats
+End Sub
+
+' === Lista mappar med indrag ===
+Private Sub BuildFolderList()
+    Dim i As Long, indent As String
+    lstFolders.Clear
+    ReDim DisplayedFolderIDs(UBound(IndexedFolders))
+
+    For i = 0 To UBound(IndexedFolders)
+        Select Case IndexedFolders(i).depth
+            Case 0: indent = ""
+            Case 1: indent = "- "
+            Case Else: indent = String((IndexedFolders(i).depth - 1) * 2, " ") & "- "
+        End Select
+
+        lstFolders.AddItem indent & GetIndexedFolderName(IndexedFolders(i).folderPath)
+        DisplayedFolderIDs(i) = IndexedFolders(i).ID
+    Next i
+
+    lstFolders.MultiSelect = fmMultiSelectMulti
+End Sub
+
+Private Sub lblAppVersion_Click()
+
+End Sub
+
+Private Sub lblStats_Click()
+
+End Sub
+
+' === Ändring i mappval ===
+Private Sub lstFolders_Change()
+    Dim i As Long
+    For i = 0 To lstFolders.ListCount - 1
+        IndexedFolders(DisplayedFolderIDs(i)).selected = lstFolders.selected(i)
+    Next i
+
+    Call UpdateFilesFromSelectedFolders
+    Call UpdateStats
+End Sub
+
+' === Visa filer från valda mappar ===
+Private Sub UpdateFilesFromSelectedFolders()
+    Dim i As Long, j As Long
+    listFiles.Clear
+
+    For i = 0 To UBound(IndexedFiles)
+        IndexedFiles(i).selected = False
+    Next i
+
+    For i = 0 To UBound(IndexedFolders)
+        If IndexedFolders(i).selected Then
+            For j = 0 To UBound(IndexedFiles)
+                If IndexedFiles(j).parentFolderID = IndexedFolders(i).ID Then
+                    If Not FileAlreadyListed(listFiles, IndexedFiles(j).fileName) Then
+                        listFiles.AddItem IndexedFiles(j).fileName
+                        listFiles.selected(listFiles.ListCount - 1) = True
+                        IndexedFiles(j).selected = True
+                    End If
+                End If
+            Next j
+        End If
+    Next i
+End Sub
+
+' === Filtrera dubbletter ===
+Private Function FileAlreadyListed(lst As MSForms.ListBox, fileName As String) As Boolean
+    Dim i As Long
+    For i = 0 To lst.ListCount - 1
+        If lst.List(i) = fileName Then
+            FileAlreadyListed = True
+            Exit Function
+        End If
+    Next i
+    FileAlreadyListed = False
+End Function
+
+' === Ändra valtillstånd i IndexedFiles ===
+Private Sub listFiles_Change()
+    Dim i As Long, j As Long, fname As String
+
+    For i = 0 To listFiles.ListCount - 1
+        fname = listFiles.List(i)
+        For j = 0 To UBound(IndexedFiles)
+            If IndexedFiles(j).fileName = fname Then
+                IndexedFiles(j).selected = listFiles.selected(i)
+                Exit For
+            End If
+        Next j
+    Next i
+
+    Call UpdateStats
+End Sub
+
+' === Markera fil som vald manuellt ===
+Private Sub SetFileSelectedStatus(fileName As String, sel As Boolean)
+    Dim i As Long
+    For i = 0 To UBound(IndexedFiles)
+        If IndexedFiles(i).fileName = fileName Then
+            IndexedFiles(i).selected = sel
+            Exit Sub
+        End If
+    Next i
+End Sub
+
+' === Lägga till valda filer till lstFilesToProcess ===
+Private Sub btnAddFiles_Click()
+    Dim i As Long, fname As String
+
+    For i = 0 To listFiles.ListCount - 1
+        If listFiles.selected(i) Then
+            fname = listFiles.List(i)
+            If Not FileAlreadyListed(lstFilesToProcess, fname) Then
+                lstFilesToProcess.AddItem fname
+                Call SetFileSelectedStatus(fname, True)
+            End If
+        End If
+    Next i
+
+    Call UpdateStats
+    Call ResetSaveUI
+
+End Sub
+
+' === Ta bort valda filer från lstFilesToProcess ===
+Private Sub btnRemFiles_Click()
+    Dim i As Long
+    For i = lstFilesToProcess.ListCount - 1 To 0 Step -1
+        If lstFilesToProcess.selected(i) Then
+            Call SetFileSelectedStatus(lstFilesToProcess.List(i), False)
+            lstFilesToProcess.RemoveItem i
+        End If
+    Next i
+
+    Call UpdateStats
+    Call ResetSaveUI
+End Sub
+
+' === Spara urval till arrays ===
+Private Sub btnSaveSelection_Click()
+    Dim i As Long, j As Long
+    Dim fCount As Long, dCount As Long
+    Dim fname As String
+    Dim folderIDsDict As Object
+    Set folderIDsDict = CreateObject("Scripting.Dictionary")
+
+    Erase selectedFiles
+    Erase selectedFolders
+
+    For i = 0 To lstFilesToProcess.ListCount - 1
+        fname = lstFilesToProcess.List(i)
+
+        For j = 0 To UBound(IndexedFiles)
+            If IndexedFiles(j).fileName = fname Then
+                ReDim Preserve selectedFiles(fCount)
+                selectedFiles(fCount).fileName = IndexedFiles(j).fileName
+                selectedFiles(fCount).parentID = IndexedFiles(j).parentFolderID
+                selectedFiles(fCount).filePath = IndexedFiles(j).filePath
+                fCount = fCount + 1
+
+                If Not folderIDsDict.Exists(CStr(IndexedFiles(j).parentFolderID)) Then
+                    folderIDsDict.Add CStr(IndexedFiles(j).parentFolderID), IndexedFiles(j).parentFolderID
+                End If
+                Exit For
+            End If
+        Next j
+    Next i
+
+    Dim key As Variant
+    For Each key In folderIDsDict.keys
+        ReDim Preserve selectedFolders(dCount)
+        selectedFolders(dCount) = IndexedFolders(folderIDsDict(key))
+        dCount = dCount + 1
+    Next key
+   
+    ' === Visuell feedback när sparat ===
+    lstFilesToProcess.BackColor = RGB(240, 240, 240)  ' Grå (sparad)
+    BtnSaveSelection.BackColor = RGB(200, 200, 200)   ' Grå (sparad)
+    BtnSaveSelection.Caption = "Selection Saved, select processor"
+    
+    btnGo.BackColor = RGB(200, 255, 200)              ' Grön (aktiv)
+    btnGo.Enabled = True                              ' Nu aktiv
+    cmbNextForm.BackColor = vbWhite                   ' Alltid vit
+
+End Sub
+Private Sub ResetSaveUI()
+    lstFilesToProcess.BackColor = vbWhite
+    BtnSaveSelection.BackColor = RGB(200, 255, 200)   ' Grön (spara krävs)
+    BtnSaveSelection.Caption = "Save Selection"
+    
+    btnGo.BackColor = vbWhite
+    btnGo.Enabled = False                             ' Blockerad
+    cmbNextForm.BackColor = vbWhite                   ' Alltid vit
+End Sub
+
+
+Private Sub lstFilesToProcess_Change()
+    Call ResetSaveUI
+    Call UpdateStats
+End Sub
+
+
+' === Statistikruta längst ner ===
+Private Sub UpdateStats()
+    Dim fCount As Long, dCount As Long
+    Dim i As Long, j As Long
+    Dim tempFolderDict As Object
+    Set tempFolderDict = CreateObject("Scripting.Dictionary")
+
+    ' Räkna endast från "Files to Process"
+    fCount = lstFilesToProcess.ListCount
+
+    For i = 0 To lstFilesToProcess.ListCount - 1
+        Dim fname As String
+        fname = lstFilesToProcess.List(i)
+
+        ' Hitta parentFolderID för varje fil
+        For j = 0 To UBound(IndexedFiles)
+            If IndexedFiles(j).fileName = fname Then
+                If Not tempFolderDict.Exists(IndexedFiles(j).parentFolderID) Then
+                    tempFolderDict.Add IndexedFiles(j).parentFolderID, True
+                End If
+                Exit For
+            End If
+        Next j
+    Next i
+
+    dCount = tempFolderDict.count
+
+    lblStats.Caption = fCount & " file(s) selected from " & dCount & " folder(s)."
+End Sub
+
+Private Sub btnGo_Click()
+    If lstFilesToProcess.ListCount = 0 Then
+        MsgBox "No files selected to process.", vbExclamation
+        Exit Sub
+    End If
+
+    ' Spara det aktuella urvalet
+    Call btnSaveSelection_Click
+
+    ' Öppna rätt formulär
+    Select Case cmbNextForm.Value
+        Case "Search & Replace"
+            frmReplaceTool.Show
+
+        Case "Metadata injection"
+            frmMetadata.Show
+
+        Case "Format cleanup"
+            frmFormatter.Show
+
+        Case Else
+            MsgBox "Please select a module to continue.", vbInformation
+    End Select
+End Sub
+
+Private Sub UserForm_Click()
+End Sub
+
+
+frmReplaceTool:
+
+
+Private Sub btnBrowsePDFPath_Click()
+    With Application.FileDialog(msoFileDialogFolderPicker)
+        .Title = "Välj alternativ PDF-mapp"
+        If .Show = -1 Then
+            txtAltPDFPath.Text = .SelectedItems(1)
+        End If
+    End With
+End Sub
+
+Private Sub btnStart_Click()
+    If Not ValidateProcessingSettings() Then Exit Sub
+    StartProcessing
+End Sub
+
+Private Sub btnCancel_Click()
+    cancelRequested = True
+    lblStatus2.Caption = "Status: Aborting..."
+End Sub
+
+Private Sub btnSpellcheck_Click()
+    ' Rensa alla tidigare sök-/ersättfält och listan
+    Dim i As Long
+    For i = 1 To 5
+        Me.Controls("txtFind" & i).Text = ""
+        Me.Controls("txtReplace" & i).Text = ""
+        Me.Controls("chkCase" & i).Value = False
+        Me.Controls("chkWhole" & i).Value = False
+    Next i
+    Me.lstSpellingResult.Clear
+
+' === Kör stavningsanalysen på indexerade filer ===
+Dim filePaths() As String
+filePaths = GetSelectedFilePaths()
+
+Call PreScanSpelling( _
+    filePaths:=filePaths, _
+    language:=Me.cmbLanguage.Text, _
+    preserveFolderName:=Me.txtPreserveSubFolder.Text)
+
+End Sub
+
+
+Private Sub cmbLanguage_Change()
+
+End Sub
+
+Private Sub lblCreatedBy_Click()
+
+End Sub
+
+Private Sub Label16_Click()
+
+End Sub
+
+Private Sub lblAppVersion_Click()
+
+End Sub
+
+Private Sub lblAuthor_Click()
+    ' Öppna Teams chatt
+    ThisDocument.FollowHyperlink "https://teams.microsoft.com/l/chat/0/0?users=alexander.carlborg@afry.com"
+End Sub
+
+Private Sub lblProgressBar_Click()
+
+End Sub
+
+Private Sub lblStats_Click()
+
+End Sub
+
+Private Sub UserForm_Initialize()
+    Me.Caption = GetTitle_frmReplaceTool()
+    lblAppVersion.Caption = GetAppVersion()
+
+cmbPDFType.Clear
+cmbPDFType.AddItem "Normal"
+cmbPDFType.AddItem "PDF/A-1b"
+cmbPDFType.ListIndex = 0
+
+cmbLanguage.Clear
+cmbLanguage.AddItem "Svenska"
+cmbLanguage.AddItem "Engelska"
+cmbLanguage.ListIndex = 0
+
+chkExportPDF.Value = False
+chkKeepOriginal.Value = False
+
+lblStatus2.Caption = "Status: Ready"
+lblProgress.Caption = ""
+lblStats.Caption = ""
+lblProgressBar.Width = 0
+
+' === Läs in sparade filer från frmIndexBrowser ===
+Dim files() As tFileSelection
+Dim fullPaths() As String
+Dim i As Long
+
+On Error GoTo NoFiles
+files = GetSelectedFiles()
+fullPaths = GetSelectedFilePaths()
+
+If (Not Not files) = False Or UBound(files) < 0 Then GoTo NoFiles
+
+lstFiles.Clear
+For i = 0 To UBound(files)
+    lstFiles.AddItem fullPaths(i)
+Next i
+
+lblStats.Caption = "Loaded " & UBound(files) + 1 & " file(s) from saved index"
+Exit Sub
+
+NoFiles:
+    lstFiles.Clear
+    lblStats.Caption = "No files loaded from index."
+
+
+End Sub
+
+
+
+
+
+
+
