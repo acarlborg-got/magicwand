@@ -45,10 +45,13 @@ It is built to support professional workflows in environments with heavy documen
 - Change all occurrences of a legacy product code across hundreds of files  
 - Replace old dates, terms, or contact info regardless of whether they are in headers, footers, or body  
 
-### 📁 Batch Rename & Export  
+### 📁 Batch Rename & Export
 - Append date/version to filenames (e.g., `_v1.2_2025-05`)  
-- Export all `.docx` files as PDF/A-1b for archive or client delivery  
-- Rename files using client-specific or system-specific prefixes/suffixes  
+- Export all `.docx` files as PDF/A-1b for archive or client delivery
+- Rename files using client-specific or system-specific prefixes/suffixes
+
+### 🗂 Metadata Inventory
+- Indexing a folder also stores each document's Title, Subject, Author, Keywords and detected date in the `MetadataIndex` array for quick access later
 
 ### 📝 Standardize Documents  
 - Automatically replace terms or references across multiple documents  
@@ -59,8 +62,8 @@ It is built to support professional workflows in environments with heavy documen
 - Catch subtle typing errors not flagged manually  
 - Export all detected spelling issues to log file for audit or documentation  
 
-## Upcoming Modules  
-- Field and metadata control (Author, Title, Keywords, etc.)  
+## Upcoming Modules
+- Metadata injection and extraction (Author, Title, Keywords, Document date)
 - Document structure mapping and content validation  
 - Rule-based text filtering per document type (e.g., Technical Description vs Operation Card)  
 - Integrated language pack support via `.lng` files  
@@ -77,6 +80,8 @@ All release notes are stored in `changelog.txt`.
 ## Additional Documentation
 - [Roadmap](ROADMAP.md)
 - [File Reference](REFERENCE.md)
+- [Metadata Guide](METADATA_GUIDE.md)
+- [MetaTool Guide](METADATA_GUIDE.md#advanced-metatool)
 
 ## License  
 Internal use only – AFRY Buildings Automation Gothenburg 
