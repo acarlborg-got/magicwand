@@ -29,13 +29,12 @@ End Sub
 ' Initierar formuläret och gränssnittet
 Private Sub UserForm_Initialize()
     Me.Caption = GetTitle_frmIndexBrowser()
+    LoadLanguage DEFAULT_LANGUAGE
     lblAppVersion.Caption = GetAppVersion()
 
     ' Initiera nästa-formular lista
     With cmbNextForm
         .AddItem "Search & Replace"
-        .AddItem "Metadata injection"
-        .AddItem "Format cleanup"
     End With
     ' UI-kontroller
     btnGo.Enabled = False
@@ -318,17 +317,9 @@ Private Sub btnGo_Click()
     Select Case cmbNextForm.Value
         Case "Search & Replace"
             frmReplaceTool.Show
-
-        Case "Metadata injection"
-            frmMetadata.Show
-
-        Case "Format cleanup"
-            frmFormatter.Show
-
         Case Else
             MsgBox "Please select a module to continue.", vbInformation
     End Select
-End Sub
 
 ' (Ej använd) Klick på formulärytan
 Private Sub UserForm_Click()

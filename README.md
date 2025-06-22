@@ -38,6 +38,8 @@ It is built to support professional workflows in environments with heavy documen
 4. Choose folder, language, and options  
 5. Run search/replace or spellcheck across multiple documents  
 
+6. Place language files in the `languages` folder (e.g., `EN.lng`, `SE.lng`) to localize button text.
+
 ## Suggested Use Cases  
 
 ### 🔁 Bulk Replace  
