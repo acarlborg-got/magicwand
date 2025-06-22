@@ -59,8 +59,8 @@ It is built to support professional workflows in environments with heavy documen
 - Catch subtle typing errors not flagged manually  
 - Export all detected spelling issues to log file for audit or documentation  
 
-## Upcoming Modules  
-- Field and metadata control (Author, Title, Keywords, etc.)  
+## Upcoming Modules
+- Metadata injection and extraction (Author, Title, Keywords, Document date)
 - Document structure mapping and content validation  
 - Rule-based text filtering per document type (e.g., Technical Description vs Operation Card)  
 - Integrated language pack support via `.lng` files  
@@ -77,6 +77,8 @@ All release notes are stored in `changelog.txt`.
 ## Additional Documentation
 - [Roadmap](ROADMAP.md)
 - [File Reference](REFERENCE.md)
+- [Metadata Guide](METADATA_GUIDE.md)
+- [MetaTool Guide](METADATA_GUIDE.md#advanced-metatool)
 
 ## License  
 Internal use only – AFRY Buildings Automation Gothenburg 
