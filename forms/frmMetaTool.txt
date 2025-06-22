@@ -1,0 +1,37 @@
+Option Explicit
+
+Private Sub UserForm_Initialize()
+    Me.Caption = ":: MagicWand | Metadata Tool"
+
+    With cmbMetaFieldGlobal
+        .AddItem "Title"
+        .AddItem "Subject"
+        .AddItem "Author"
+        .AddItem "Keywords"
+    End With
+
+    With cmbSourceGlobal
+        .AddItem "Static Text"
+        .AddItem "Current User"
+        .AddItem "Filename"
+        .AddItem "Last Saved Date"
+        .AddItem "Current Date"
+    End With
+End Sub
+
+Private Sub btnApplyGlobal_Click()
+    ApplyGlobalMetadata cmbMetaFieldGlobal.Text, cmbSourceGlobal.Text, txtValueGlobal.Text, chkOverwriteEmptyOnly.Value
+    MsgBox "Global metadata applied.", vbInformation
+End Sub
+
+Private Sub btnAddRule_Click()
+    ' TODO: Lägg till en ny rad i lstMetaMatrix
+End Sub
+
+Private Sub btnRemoveRule_Click()
+    ' TODO: Ta bort markerad rad
+End Sub
+
+Private Sub btnApplyMatrix_Click()
+    ' TODO: Läs alla regler och kör ApplyMetadataMatrix
+End Sub

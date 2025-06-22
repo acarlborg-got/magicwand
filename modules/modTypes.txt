@@ -49,4 +49,13 @@ End Type
 
 Public MetadataIndex() As FileMetadata
 
+' === Regel för villkorstyrd metadata ===
+Public Type MetaRule
+    Field As String
+    Condition As String
+    Action As String
+    ValueSource As String
+    ValueText As String
+End Type
+
 

@@ -78,6 +78,7 @@ All release notes are stored in `changelog.txt`.
 - [Roadmap](ROADMAP.md)
 - [File Reference](REFERENCE.md)
 - [Metadata Guide](METADATA_GUIDE.md)
+- [MetaTool Guide](METADATA_GUIDE.md#advanced-metatool)
 
 ## License  
 Internal use only – AFRY Buildings Automation Gothenburg 

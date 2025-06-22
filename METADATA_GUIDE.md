@@ -33,3 +33,27 @@ information such as `Datum`, `Handläggare` and `Konstruktör` from the
 content of each Word file. The function `ExtractDocumentDateFromContent`
 tries to locate the first `yyyy-mm-dd` string if no date is available in
 the document properties.
+
+## Advanced MetaTool
+
+A second form **frmMetaTool** provides a larger interface for rule-based
+metadata updates.
+
+### Import
+1. Import `modules/modMetaTool.txt` and `forms/frmMetaTool.txt`.
+2. Ensure `modTypes.txt` is imported so the `MetaRule` type exists.
+
+### Global section controls
+
+| Control | Type | Purpose |
+|---------|------|---------|
+| `cmbMetaFieldGlobal` | ComboBox | Target metadata field |
+| `cmbSourceGlobal` | ComboBox | Value source such as *Current User* |
+| `txtValueGlobal` | TextBox | Used when source is *Static Text* |
+| `chkOverwriteEmptyOnly` | CheckBox | Only set if current value is empty |
+| `btnApplyGlobal` | CommandButton | Apply to all indexed files |
+
+### Conditional matrix controls
+The lower half uses `lstMetaMatrix` for rule rows along with the
+`btnAddRule`, `btnRemoveRule` and `btnApplyMatrix` buttons. Each row lets
+you pick a field, condition, action and replacement source.
