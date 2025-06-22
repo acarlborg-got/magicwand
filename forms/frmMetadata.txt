@@ -6,6 +6,7 @@ Private Sub btnInject_Click()
     meta.Subject = txtSubject.Text
     meta.Author = txtAuthor.Text
     meta.Keywords = txtKeywords.Text
+    meta.DocumentDate = txtDate.Text
 
     Dim files() As IndexedFile
     files = GetSelectedIndexedFiles()
@@ -22,4 +23,5 @@ Private Sub UserForm_Initialize()
     txtSubject.Text = ""
     txtAuthor.Text = ""
     txtKeywords.Text = ""
+    txtDate.Text = Format(Date, "yyyy-mm-dd")
 End Sub

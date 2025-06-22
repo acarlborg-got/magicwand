@@ -60,7 +60,7 @@ It is built to support professional workflows in environments with heavy documen
 - Export all detected spelling issues to log file for audit or documentation  
 
 ## Upcoming Modules
-- Metadata injection and extraction (Author, Title, Keywords)
+- Metadata injection and extraction (Author, Title, Keywords, Document date)
 - Document structure mapping and content validation  
 - Rule-based text filtering per document type (e.g., Technical Description vs Operation Card)  
 - Integrated language pack support via `.lng` files  

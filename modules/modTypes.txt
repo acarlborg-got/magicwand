@@ -44,6 +44,7 @@ Public Type FileMetadata
     Datum As String
     Handlaggare As String
     Konstruktor As String
+    DocumentDate As String
 End Type
 
 Public MetadataIndex() As FileMetadata

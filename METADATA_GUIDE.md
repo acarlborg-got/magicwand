@@ -17,6 +17,7 @@ Create a new UserForm named **frmMetadata** with the following controls:
 | `txtSubject` | TextBox | Document subject       |
 | `txtAuthor`  | TextBox | Document author        |
 | `txtKeywords`| TextBox | Document keywords      |
+| `txtDate`    | TextBox | Document date (yyyy-mm-dd) |
 | `btnInject`  | CommandButton | Write metadata to selected files |
 
 Import the code from `forms/frmMetadata.txt` into this form.
@@ -29,4 +30,6 @@ Import the code from `forms/frmMetadata.txt` into this form.
 
 The module also contains helpers to read metadata and extract extra
 information such as `Datum`, `Handläggare` and `Konstruktör` from the
-content of each Word file.
+content of each Word file. The function `ExtractDocumentDateFromContent`
+tries to locate the first `yyyy-mm-dd` string if no date is available in
+the document properties.
