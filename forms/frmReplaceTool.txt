@@ -1,10 +1,12 @@
 
 
+Option Explicit
+
 Private Sub btnBrowsePDFPath_Click()
     With Application.FileDialog(msoFileDialogFolderPicker)
         .Title = "Välj alternativ PDF-mapp"
         If .Show = -1 Then
-            txtAltPDFPath.Text = .SelectedItems(1)
+            Me.txtAltPDFPath.Text = .SelectedItems(1)
         End If
     End With
 End Sub
@@ -36,7 +38,7 @@ End Sub
 
 Private Sub btnCancel_Click()
     cancelRequested = True
-    lblStatus2.Caption = "Status: Aborting..."
+    Me.lblStatus2.Caption = "Status: Aborting..."
 End Sub
 
 Private Sub btnSpellcheck_Click()
@@ -95,23 +97,23 @@ Private Sub UserForm_Initialize()
     Me.Caption = GetTitle_frmReplaceTool()
     lblAppVersion.Caption = GetAppVersion()
 
-cmbPDFType.Clear
-cmbPDFType.AddItem "Normal"
-cmbPDFType.AddItem "PDF/A-1b"
-cmbPDFType.ListIndex = 0
+Me.cmbPDFType.Clear
+Me.cmbPDFType.AddItem "Normal"
+Me.cmbPDFType.AddItem "PDF/A-1b"
+Me.cmbPDFType.ListIndex = 0
 
-cmbLanguage.Clear
-cmbLanguage.AddItem "Svenska"
-cmbLanguage.AddItem "Engelska"
-cmbLanguage.ListIndex = 0
+Me.cmbLanguage.Clear
+Me.cmbLanguage.AddItem "Svenska"
+Me.cmbLanguage.AddItem "Engelska"
+Me.cmbLanguage.ListIndex = 0
 
-chkExportPDF.Value = False
-chkKeepOriginal.Value = False
+Me.chkExportPDF.Value = False
+Me.chkKeepOriginal.Value = False
 
-lblStatus2.Caption = "Status: Ready"
-lblProgress.Caption = ""
-lblStats.Caption = ""
-lblProgressBar.Width = 0
+Me.lblStatus2.Caption = "Status: Ready"
+Me.lblProgress.Caption = ""
+Me.lblStats.Caption = ""
+Me.lblProgressBar.Width = 0
 
 ' === Läs in sparade filer från frmIndexBrowser ===
 Dim files() As tFileSelection
@@ -124,17 +126,17 @@ fullPaths = GetSelectedFilePaths()
 
 If (Not Not files) = False Or UBound(files) < 0 Then GoTo NoFiles
 
-lstFiles.Clear
+Me.lstFiles.Clear
 For i = 0 To UBound(files)
-    lstFiles.AddItem fullPaths(i)
+    Me.lstFiles.AddItem fullPaths(i)
 Next i
 
-lblStats.Caption = "Loaded " & UBound(files) + 1 & " file(s) from saved index"
+Me.lblStats.Caption = "Loaded " & UBound(files) + 1 & " file(s) from saved index"
 Exit Sub
 
 NoFiles:
-    lstFiles.Clear
-    lblStats.Caption = "No files loaded from index."
+    Me.lstFiles.Clear
+    Me.lblStats.Caption = "No files loaded from index."
 
 
 End Sub
