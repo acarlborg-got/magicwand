@@ -1,0 +1,6 @@
+MagicWand local history
+=======================
+
+v0.1 - Initial proof of concept macros
+v0.2 - Added search and replace tool
+v0.3 - Introduced frmIndexBrowser for file selection

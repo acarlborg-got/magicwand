@@ -219,25 +219,6 @@ Option Explicit
 
 Public cancelRequested As Boolean
 
-Public Sub StartProcessing()
-    Dim findTexts(1 To 5) As String
-    Dim replaceTexts(1 To 5) As String
-    Dim caseFlags(1 To 5) As Boolean
-    Dim wordFlags(1 To 5) As Boolean
-    Dim i As Long
-
-    For i = 1 To 5
-        findTexts(i) = Me.Controls("txtFind" & i).Text
-        replaceTexts(i) = Me.Controls("txtReplace" & i).Text
-        caseFlags(i) = Me.Controls("chkCase" & i).Value
-        wordFlags(i) = Me.Controls("chkWhole" & i).Value
-    Next i
-
-    ProcessIndexedDocuments findTexts, replaceTexts, caseFlags, wordFlags, _
-        Me.chkExportPDF.Value, Me.cmbPDFType.Text, Me.txtAltPDFPath.Text, _
-        Me.txtPrefix.Text, Me.txtSuffix.Text, Me.chkKeepOriginal.Value, _
-        Me.cmbLanguage.Text
-End Sub
 
 
 modReplace:
@@ -666,18 +647,13 @@ End Type
 Public Type tFileSelection
     fileName As String
     parentID As Long
+    filePath As String
 End Type
 
 ' === Globala arrayer ===
 Public IndexedFolders() As IndexedFolder
 Public IndexedFiles() As IndexedFile
 
-' För mapplistan med indrag (UI)
-Public DisplayedFolderIDs() As Long
-
-' Sparat urval – exporteras till andra formulär
-Public selectedFolders() As IndexedFolder
-Public selectedFiles() As tFileSelection
 
 modUtils:
 
@@ -763,14 +739,6 @@ frmIndexBrowser:
 
 
 ' === Modulnivåtyper ===
-Private Type tFileSelection
-    fileName As String
-    parentID As Long
-    filePath As String
-End Type
-
-Private selectedFiles() As tFileSelection
-Private selectedFolders() As IndexedFolder
 Private DisplayedFolderIDs() As Long
 
 Private Sub cmbNextForm_Change()
@@ -1096,6 +1064,26 @@ End Sub
 Private Sub btnStart_Click()
     If Not ValidateProcessingSettings() Then Exit Sub
     StartProcessing
+End Sub
+
+Private Sub StartProcessing()
+    Dim findTexts(1 To 5) As String
+    Dim replaceTexts(1 To 5) As String
+    Dim caseFlags(1 To 5) As Boolean
+    Dim wordFlags(1 To 5) As Boolean
+    Dim i As Long
+
+    For i = 1 To 5
+        findTexts(i) = Me.Controls("txtFind" & i).Text
+        replaceTexts(i) = Me.Controls("txtReplace" & i).Text
+        caseFlags(i) = Me.Controls("chkCase" & i).Value
+        wordFlags(i) = Me.Controls("chkWhole" & i).Value
+    Next i
+
+    ProcessIndexedDocuments findTexts, replaceTexts, caseFlags, wordFlags, _
+        Me.chkExportPDF.Value, Me.cmbPDFType.Text, Me.txtAltPDFPath.Text, _
+        Me.txtPrefix.Text, Me.txtSuffix.Text, Me.chkKeepOriginal.Value, _
+        Me.cmbLanguage.Text
 End Sub
 
 Private Sub btnCancel_Click()
