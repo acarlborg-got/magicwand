@@ -1,4 +1,6 @@
 
+Option Explicit
+
 Public Function ValidateProcessingSettings() As Boolean
     With frmReplaceTool
         ' Default to valid

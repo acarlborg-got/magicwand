@@ -1,5 +1,7 @@
 
 
+Option Explicit
+
 Private Sub btnBrowsePDFPath_Click()
     With Application.FileDialog(msoFileDialogFolderPicker)
         .Title = "Välj alternativ PDF-mapp"

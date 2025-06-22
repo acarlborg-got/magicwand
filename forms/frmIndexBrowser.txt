@@ -1,5 +1,7 @@
 
 
+Option Explicit
+
 ' === Modulnivåtyper ===
 Private DisplayedFolderIDs() As Long
 
