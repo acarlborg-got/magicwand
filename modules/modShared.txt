@@ -1,4 +1,5 @@
 
+' Returnerar samtliga sparade filval
 Public Function GetIndexedFiles() As Variant
     GetIndexedFiles = selectedFiles  ' tFileSelection() från frmIndexBrowser
 End Function

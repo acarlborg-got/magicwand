@@ -2,6 +2,7 @@
 ' === modReplace – Behandling av filer från index ===
 Option Explicit
 
+' Går igenom de valda filerna och utför sök/ersätt samt eventuell PDF-export
 Public Sub ProcessIndexedDocuments(findTexts() As String, replaceTexts() As String, _
     caseFlags() As Boolean, wordFlags() As Boolean, exportPDF As Boolean, exportPDFType As String, _
     altPDFPath As String, prefix As String, suffix As String, keepOriginal As Boolean, language As String)
@@ -88,6 +89,7 @@ HandleError:
     Resume ContinueLoop
 End Sub
 
+' Söker igenom hela dokumentet och ersätter alla förekomster
 Private Function ReplaceAll(doc As Document, findText As String, replaceText As String, _
     caseSensitive As Boolean, wholeWord As Boolean) As Long
 
@@ -109,6 +111,7 @@ Private Function ReplaceAll(doc As Document, findText As String, replaceText As 
     ReplaceAll = count
 End Function
 
+' Utför själva ersättningen i en given Range
 Private Function ReplaceInRange(rng As Range, findText As String, replaceText As String, _
     caseSensitive As Boolean, wholeWord As Boolean) As Long
 
@@ -141,6 +144,7 @@ Private Function ReplaceInRange(rng As Range, findText As String, replaceText As
     ReplaceInRange = count
 End Function
 
+' Hämtar grundmappen där loggar ska sparas
 Private Function GetBaseFolder(files() As IndexedFile) As String
     If UBound(files) >= 0 Then
         GetBaseFolder = Left(files(0).filePath, InStrRev(files(0).filePath, "\") - 1)

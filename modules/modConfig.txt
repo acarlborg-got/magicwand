@@ -5,14 +5,17 @@ Option Explicit
 
 Public Const APP_VERSION As String = "v0.3 [Dev]"
 
+' Returnerar en beskrivande versionssträng som visas i formulären
 Public Function GetAppVersion() As String
     GetAppVersion = "MagicWand " & APP_VERSION
 End Function
 
+' Ger titeln för indexbläddraren
 Public Function GetTitle_frmIndexBrowser() As String
     GetTitle_frmIndexBrowser = ":: MagicWand | Index folders"
 End Function
 
+' Ger titeln för sök- och ersättningsverktyget
 Public Function GetTitle_frmReplaceTool() As String
     GetTitle_frmReplaceTool = ":: MagicWand | Search & Replace"
 End Function

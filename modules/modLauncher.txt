@@ -1,6 +1,7 @@
 
 Option Explicit
 
+' Öppnar formuläret för indexbläddraren
 Sub ShowReplaceTool()
     frmIndexBrowser.Show
 End Sub

@@ -2,21 +2,21 @@
 
 Option Explicit
 
-' Returnerar basnamn utan filändelse
+' Returnerar basnamnet utan filändelsen från en filväg
 Function GetBaseName(filePath As String) As String
     Dim fso As Object
     Set fso = CreateObject("Scripting.FileSystemObject")
     GetBaseName = fso.GetBaseName(filePath)
 End Function
 
-' Returnerar mappens namn från en full sökväg
+' Returnerar mappens namn från en fullständig sökväg
 Function GetFolderName(path As String) As String
     Dim fso As Object
     Set fso = CreateObject("Scripting.FileSystemObject")
     GetFolderName = fso.GetParentFolderName(path)
 End Function
 
-' Skapar mapp om den inte finns
+' Skapar mappen om den inte redan finns
 Sub EnsureFolderExists(folderPath As String)
     Dim fso As Object
     Set fso = CreateObject("Scripting.FileSystemObject")
@@ -25,7 +25,7 @@ Sub EnsureFolderExists(folderPath As String)
     End If
 End Sub
 
-' Skapar en loggfil och returnerar filnummer
+' Skapar en loggfil och returnerar filnumret
 Public Function CreateLogFile(logPath As String) As Integer
     Dim fileNum As Integer
     fileNum = FreeFile
@@ -33,7 +33,7 @@ Public Function CreateLogFile(logPath As String) As Integer
     CreateLogFile = fileNum
 End Function
 
-' Lägger till en rad i en loggfil
+' Lägger till en rad text i en loggfil
 Sub AppendToLog(fileNum As Integer, message As String)
     Print #fileNum, Now & " - " & message
 End Sub

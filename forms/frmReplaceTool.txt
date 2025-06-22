@@ -2,6 +2,7 @@
 
 Option Explicit
 
+' Väljer mapp för PDF-export
 Private Sub btnBrowsePDFPath_Click()
     With Application.FileDialog(msoFileDialogFolderPicker)
         .Title = "Välj alternativ PDF-mapp"
@@ -11,11 +12,13 @@ Private Sub btnBrowsePDFPath_Click()
     End With
 End Sub
 
+' Startar bearbetningen efter validering
 Private Sub btnStart_Click()
     If Not ValidateProcessingSettings() Then Exit Sub
     StartProcessing
 End Sub
 
+' Samlar in fält från formuläret och kör ProcessIndexedDocuments
 Private Sub StartProcessing()
     Dim findTexts(1 To 5) As String
     Dim replaceTexts(1 To 5) As String
@@ -36,11 +39,13 @@ Private Sub StartProcessing()
         Me.cmbLanguage.Text
 End Sub
 
+' Avbryter pågående bearbetning
 Private Sub btnCancel_Click()
     cancelRequested = True
     lblStatus2.Caption = "Status: Aborting..."
 End Sub
 
+' Initierar stavningskontroll på indexerade filer
 Private Sub btnSpellcheck_Click()
     ' Rensa alla tidigare sök-/ersättfält och listan
     Dim i As Long
@@ -64,35 +69,43 @@ Call PreScanSpelling( _
 End Sub
 
 
+' (Ej använd) Händelse för språkbyte
 Private Sub cmbLanguage_Change()
 
 End Sub
 
+' (Ej använd) Klick på "Created By"-text
 Private Sub lblCreatedBy_Click()
 
 End Sub
 
+' (Ej använd) Klick på etikett
 Private Sub Label16_Click()
 
 End Sub
 
+' (Ej använd) Visar applikationsversion
 Private Sub lblAppVersion_Click()
 
 End Sub
 
+' Öppnar Teams-chatt med utvecklaren
 Private Sub lblAuthor_Click()
     ' Öppna Teams chatt
     ThisDocument.FollowHyperlink "https://teams.microsoft.com/l/chat/0/0?users=alexander.carlborg@afry.com"
 End Sub
 
+' (Ej använd) Klick på progressbaren
 Private Sub lblProgressBar_Click()
 
 End Sub
 
+' (Ej använd) Klick på statusrutan
 Private Sub lblStats_Click()
 
 End Sub
 
+' Initierar formuläret och laddar sparad fil-lista
 Private Sub UserForm_Initialize()
     Me.Caption = GetTitle_frmReplaceTool()
     lblAppVersion.Caption = GetAppVersion()
