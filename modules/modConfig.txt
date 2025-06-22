@@ -4,6 +4,7 @@
 Option Explicit
 
 Public Const APP_VERSION As String = "v0.3 [Dev]"
+Public Const DEFAULT_LANGUAGE As String = "EN"
 
 ' Returnerar en beskrivande versionssträng som visas i formulären
 Public Function GetAppVersion() As String

@@ -108,7 +108,11 @@ End Sub
 ' Initierar formuläret och laddar sparad fil-lista
 Private Sub UserForm_Initialize()
     Me.Caption = GetTitle_frmReplaceTool()
+    LoadLanguage DEFAULT_LANGUAGE
     lblAppVersion.Caption = GetAppVersion()
+    btnStart.Caption = T("START")
+    btnCancel.Caption = T("CANCEL")
+    lblStatus2.Caption = T("STATUS_READY")
 
 cmbPDFType.Clear
 cmbPDFType.AddItem "Normal"
@@ -123,7 +127,6 @@ cmbLanguage.ListIndex = 0
 chkExportPDF.Value = False
 chkKeepOriginal.Value = False
 
-lblStatus2.Caption = "Status: Ready"
 lblProgress.Caption = ""
 lblStats.Caption = ""
 lblProgressBar.Width = 0
