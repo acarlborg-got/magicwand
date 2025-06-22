@@ -67,13 +67,36 @@ See `REFERENCE.md` for a concise list of these modules and forms.
 - **Live Spellcheck**: `modSpellCheck` loops through documents, collects all spelling errors into a dictionary, and ranks them. The top entries populate the replace fields with suggestions via Word’s built-in spellchecking API.
 - **Shared Data**: `modShared` exposes helper functions like `GetSelectedFilePaths` so forms can access the same selections.
 
-## 6. Roadmap and Future Plans
-`ROADMAP.md` outlines planned features, including metadata editing, language detection and advanced rules. Current development is tracked in `changelog.txt`.
 
-## 7. Packaging
-Run `./build_package.sh` to zip all modules, forms and documentation into `package/MagicWand_v0.3-dev.zip` for distribution.
+## 6. Logging and Statistics
+MagicWand writes two log files in the base folder of the documents being processed. To prevent
+conflicts on shared storage, the file names include a sanitized user identifier obtained from
+`GetUserIdentifier`:
 
-## 8. License
+```
+MagicWand_<user>_Log.txt
+MagicWand_<user>_Errors.txt
+```
+
+Each entry begins with a timestamp, making it easy to aggregate usage data and estimate time saved
+across the organization.
+
+## 7. Language Packs
+All interface text can be localized through simple `.lng` files in the `languages` directory. The
+default code is specified by `DEFAULT_LANGUAGE` in `modConfig`. Example files `EN.lng` and `SE.lng`
+illustrate the `KEY=VALUE` format used by the `LoadLanguage` routine. The helper function `T()`
+retrieves translations at runtime so additional languages can be added without recompiling the
+template.
+
+## 8. Roadmap and Future Plans
+`ROADMAP.md` outlines planned features, including metadata editing, language detection and advanced
+rules. Current development is tracked in `changelog.txt`.
+
+## 9. Packaging
+Run `./build_package.sh` to zip all modules, forms and documentation into
+`package/MagicWand_v0.3-dev.zip` for distribution.
+
+## 10. License
 The project is intended for internal use at AFRY Buildings Automation Gothenburg.
 
 ---
