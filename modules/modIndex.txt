@@ -36,14 +36,14 @@ Public Sub IndexFoldersAndFiles(rootPath As String)
                 ReDim Preserve MetadataIndex(fileCount)
                 With IndexedFiles(fileCount)
                     .ID = fileCount
-                    .filePath = file.path
+                    .filePath = file.Path
                     .fileName = file.Name
                     .extension = fso.GetExtensionName(file.Name)
                     .parentFolderID = folderCount - 1
                     .lastModified = file.DateLastModified
                     .selected = False
                 End With
-                MetadataIndex(fileCount) = ReadMetadata(file.path)
+                MetadataIndex(fileCount) = ReadMetadata(file.Path)
                 fileCount = fileCount + 1
             End If
         Next

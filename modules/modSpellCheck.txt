@@ -117,7 +117,7 @@ Private Sub ScanSpellingRecursive(folder As Object, fallbackLangID As Long, _
             UpdateStatus "Spellcheck – " & file.Name, , "File " & fileCount
             UpdateProgress 0.01 * (fileCount Mod 100)
 
-            Set doc = Documents.Open(file.path, ReadOnly:=True, Visible:=False)
+            Set doc = Documents.Open(file.Path, ReadOnly:=True, Visible:=False)
             doc.Content.LanguageID = fallbackLangID
 
             For Each err In doc.SpellingErrors
