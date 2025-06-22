@@ -1,7 +1,7 @@
 # MagicWand Toolkit  
-**Version:** v0.25b [Stable]  
-**Module:** Search & Replace  
-**Date:** 2025-05-21  
+**Version:** v0.3b [Dev]
+**Module:** Search & Replace
+**Date:** 2025-06-22
 
 ## Overview  
 MagicWand is a modular VBA-based automation toolkit designed for advanced document management in Microsoft Word.  
@@ -78,6 +78,12 @@ All release notes are stored in `changelog.txt`.
 - [Roadmap](ROADMAP.md)
 - [File Reference](REFERENCE.md)
 
-## License  
-Internal use only – AFRY Buildings Automation Gothenburg 
-Authored and maintained by internal development team  
+## Packaging a Release
+Run `./build_package.sh` to bundle all modules, forms and documentation into
+`package/MagicWand_v0.3-dev.zip`. The script simply zips the current repository
+state and is intended for quick distribution or archival of this development
+build.
+
+## License
+Internal use only – AFRY Buildings Automation Gothenburg
+Authored and maintained by internal development team
