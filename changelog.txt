@@ -1,0 +1,54 @@
+MagicWand - Changelog  
+======================  
+
+v0.3b | In Development  
+----------------------  
+- Dynamic handling of Find & Replace rows  
+- "+" and "–" buttons to add/remove pairs on the fly  
+- Automatic row creation during spellcheck  
+- Framework for future rule engine (Operation Card vs Technical Description)  
+- Project/type/language-based template selector planned  
+- Initial support for language-specific rules and field replacement  
+- Preparation for multilingual distribution
+
+v0.25b [Stable] | 2025-05-21  
+----------------------------  
+- Complete rewrite of PreScanSpelling logic  
+- Live visual updates during scanning: active file, status, and progress bar  
+- Respects subfolder setting (exclude/include based on checkbox)  
+- Preserve folder is automatically excluded from all scans (prevents recursion loop)  
+- All spelling errors shown live in lstSpellingResult, sorted by frequency  
+- Top 5 spelling issues populate txtFind1–5 and txtReplace1–5  
+- Automatic evaluation of Case Sensitive and Whole Word checkboxes  
+- Empty results handled gracefully (no crashes, user feedback shown)  
+- Clear all replace fields and list on each new spellcheck  
+- Export of full spelling dictionary with frequency to MagicWand_Spelling.txt  
+- Code hardened for production: modular, documented, resilient 
+- SharePoint-based distribution via synced OneDrive folder  
+
+v0.2b | 2025-05-19  
+------------------  
+- Pre-flight spellcheck with language selection  
+- Automatic filling of spelling issues into replace fields  
+- Per-word Case Sensitive and Whole Word analysis  
+- Updated status bar and progress bar with percentage  
+- PDF export with custom prefix/suffix and format option  
+- Optional subfolder for preserving original Word documents  
+- Version and changelog shown in GUI  
+- Centralized version control via code module  
+- Log and error handling with local text files  
+- Improved resilience to corrupted or locked files  
+
+v0.1b – 2025-05-10  
+------------------  
+- Core logic for Find & Replace across multiple Word documents  
+- Basic logging and status reporting  
+- PDF export for modified files only  
+- Static five-row Find/Replace setup  
+- Initial Case and Whole Word toggle checkboxes  
+
+v0.1a – Internal Dev  
+--------------------  
+- First UI concept created  
+- Planning of core features  
+- Initial Word API integration testing  
