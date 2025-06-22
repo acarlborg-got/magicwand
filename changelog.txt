@@ -1,16 +1,17 @@
 MagicWand - Changelog  
 ======================  
 
-v0.3b | In Development  
-----------------------  
-- Dynamic handling of Find & Replace rows  
-- "+" and "–" buttons to add/remove pairs on the fly  
-- Automatic row creation during spellcheck  
-- Framework for future rule engine (Operation Card vs Technical Description)  
-- Project/type/language-based template selector planned  
-- Initial support for language-specific rules and field replacement  
+v0.3b | In Development
+----------------------
+- Dynamic handling of Find & Replace rows
+- "+" and "–" buttons to add/remove pairs on the fly
+- Automatic row creation during spellcheck
+- Framework for future rule engine (Operation Card vs Technical Description)
+- Project/type/language-based template selector planned
+- Initial support for language-specific rules and field replacement
 - Preparation for multilingual distribution
 - Complete rewrite of engine for selection of files to process.
+- Per-user log files and language packs loaded from `languages/*.lng`
 
 v0.25b [Stable] | 2025-05-21  
 ----------------------------  

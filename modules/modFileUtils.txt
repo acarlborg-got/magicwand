@@ -25,6 +25,18 @@ Sub EnsureFolderExists(folderPath As String)
     End If
 End Sub
 
+' Returns sanitized username for per-user logs
+Public Function GetUserIdentifier() As String
+    Dim username As String
+    On Error Resume Next
+    username = Environ("UserName")
+    If username = "" Then username = Application.UserName
+    username = Replace(username, " ", "_")
+    username = Replace(username, "@", "_")
+    username = Replace(username, "\\", "_")
+    GetUserIdentifier = username
+End Function
+
 ' Skapar en loggfil och returnerar filnumret
 Public Function CreateLogFile(logPath As String) As Integer
     Dim fileNum As Integer

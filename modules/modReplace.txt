@@ -21,10 +21,12 @@ Public Sub ProcessIndexedDocuments(findTexts() As String, replaceTexts() As Stri
     Dim baseFolder As String
 
     baseFolder = GetBaseFolder(fileList)
-    logPath = baseFolder & "\MagicWand_Log.txt"
-    errorLogPath = baseFolder & "\MagicWand_Errors.txt"
-    logFile = CreateLogFile(logPath)
+    Dim userID As String
+    userID = GetUserIdentifier()
+    logPath = baseFolder & "\MagicWand_" & userID & "_Log.txt"
+    errorLogPath = baseFolder & "\MagicWand_" & userID & "_Errors.txt"
     errorLogFile = CreateLogFile(errorLogPath)
+    logFile = CreateLogFile(logPath)
 
     For i = 0 To UBound(fileList)
         DoEvents
