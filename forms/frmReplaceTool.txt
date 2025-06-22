@@ -124,16 +124,16 @@ fullPaths = GetSelectedFilePaths()
 
 If (Not Not files) = False Or UBound(files) < 0 Then GoTo NoFiles
 
-lstFiles.Clear
+Me.lstFiles.Clear
 For i = 0 To UBound(files)
-    lstFiles.AddItem fullPaths(i)
+    Me.lstFiles.AddItem fullPaths(i)
 Next i
 
 lblStats.Caption = "Loaded " & UBound(files) + 1 & " file(s) from saved index"
 Exit Sub
 
 NoFiles:
-    lstFiles.Clear
+    Me.lstFiles.Clear
     lblStats.Caption = "No files loaded from index."
 
 
