@@ -45,10 +45,13 @@ It is built to support professional workflows in environments with heavy documen
 - Change all occurrences of a legacy product code across hundreds of files  
 - Replace old dates, terms, or contact info regardless of whether they are in headers, footers, or body  
 
-### 📁 Batch Rename & Export  
+### 📁 Batch Rename & Export
 - Append date/version to filenames (e.g., `_v1.2_2025-05`)  
-- Export all `.docx` files as PDF/A-1b for archive or client delivery  
-- Rename files using client-specific or system-specific prefixes/suffixes  
+- Export all `.docx` files as PDF/A-1b for archive or client delivery
+- Rename files using client-specific or system-specific prefixes/suffixes
+
+### 🗂 Metadata Inventory
+- Indexing a folder also stores each document's Title, Subject, Author, Keywords and detected date in the `MetadataIndex` array for quick access later
 
 ### 📝 Standardize Documents  
 - Automatically replace terms or references across multiple documents  

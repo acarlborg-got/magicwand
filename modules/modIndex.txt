@@ -11,6 +11,7 @@ Public Sub IndexFoldersAndFiles(rootPath As String)
     folderCount = 0: fileCount = 0
     ReDim IndexedFolders(0)
     ReDim IndexedFiles(0)
+    ReDim MetadataIndex(0)
 
     Do While stack.count > 0
         Dim currentPath As String
@@ -32,6 +33,7 @@ Public Sub IndexFoldersAndFiles(rootPath As String)
         For Each file In folder.files
             If LCase(Right(file.Name, 5)) = ".docx" Or LCase(Right(file.Name, 4)) = ".doc" Then
                 ReDim Preserve IndexedFiles(fileCount)
+                ReDim Preserve MetadataIndex(fileCount)
                 With IndexedFiles(fileCount)
                     .ID = fileCount
                     .filePath = file.path
@@ -41,6 +43,7 @@ Public Sub IndexFoldersAndFiles(rootPath As String)
                     .lastModified = file.DateLastModified
                     .selected = False
                 End With
+                MetadataIndex(fileCount) = ReadMetadata(file.path)
                 fileCount = fileCount + 1
             End If
         Next

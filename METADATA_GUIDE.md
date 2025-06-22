@@ -23,7 +23,8 @@ Create a new UserForm named **frmMetadata** with the following controls:
 Import the code from `forms/frmMetadata.txt` into this form.
 
 ## Using the tool
-1. Index files with **frmIndexBrowser**.
+1. Index files with **frmIndexBrowser**. Metadata for each Word file is collected
+   automatically and stored in the global `MetadataIndex` array.
 2. Choose *Metadata injection* from the next-form dropdown.
 3. Enter values in the metadata form and press **Inject**.
 4. The fields are written to all selected documents.
