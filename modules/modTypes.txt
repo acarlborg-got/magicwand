@@ -1,0 +1,38 @@
+
+' ========================================
+' modTypes – Globala typer för indexering
+' ========================================
+
+Option Explicit
+
+' === Komplett metadata för varje fil i index ===
+Public Type IndexedFile
+    ID As Long
+    filePath As String
+    fileName As String
+    parentFolderID As Long
+    extension As String
+    lastModified As Date
+    selected As Boolean
+End Type
+
+' === Mappstruktur med djup ===
+Public Type IndexedFolder
+    ID As Long
+    folderPath As String
+    selected As Boolean
+    depth As Long
+End Type
+
+' === Endast sparat urval: filnamn + mappreferens ===
+Public Type tFileSelection
+    fileName As String
+    parentID As Long
+    filePath As String
+End Type
+
+' === Globala arrayer ===
+Public IndexedFolders() As IndexedFolder
+Public IndexedFiles() As IndexedFile
+
+

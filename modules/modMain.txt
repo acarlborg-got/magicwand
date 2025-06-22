@@ -1,0 +1,7 @@
+
+Option Explicit
+
+Public cancelRequested As Boolean
+
+
+
