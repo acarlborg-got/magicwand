@@ -134,11 +134,15 @@ lblProgressBar.Width = 0
 ' === Läs in sparade filer från frmIndexBrowser ===
 Dim files() As tFileSelection
 Dim fullPaths() As String
+Dim folders() As IndexedFolder
 Dim i As Long
+Dim fileCount As Long
+Dim folderCount As Long
 
 On Error GoTo NoFiles
 files = GetSelectedFiles()
 fullPaths = GetSelectedFilePaths()
+folders = GetSelectedFolders()
 
 If (Not Not files) = False Or UBound(files) < 0 Then GoTo NoFiles
 
@@ -147,7 +151,15 @@ For i = 0 To UBound(files)
     lstFiles.AddItem fullPaths(i)
 Next i
 
-lblStats.Caption = "Loaded " & UBound(files) + 1 & " file(s) from saved index"
+fileCount = UBound(files) + 1
+If (Not Not folders) = False Or UBound(folders) < 0 Then
+    folderCount = 0
+Else
+    folderCount = UBound(folders) + 1
+End If
+
+lblStats.Caption = "Loaded " & fileCount & " file(s) from " & _
+                   folderCount & " folder(s) from saved index"
 Exit Sub
 
 NoFiles:
