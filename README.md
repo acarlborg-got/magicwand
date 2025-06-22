@@ -68,9 +68,11 @@ It is built to support professional workflows in environments with heavy documen
 - Remove highlights and change tracking elements  
 - Formatting cleanup: bold, underlines, strikeout, and styles  
 
-## Version & Change Tracking  
-Current version and changelog are shown in the form interface.  
-All release notes are stored in `changelog.txt`.  
+## Version & Change Tracking
+Current version and changelog are shown in the form interface.
+Development for version 0.3 happens on the `dev` branch while `main` holds the
+stable v0.25 release. Older releases are tagged for easy reference.
+All release notes are stored in `changelog.txt`.
 
 ## License  
 Internal use only – AFRY Buildings Automation Gothenburg 
