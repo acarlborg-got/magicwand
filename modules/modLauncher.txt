@@ -1,0 +1,7 @@
+
+Option Explicit
+
+Sub ShowReplaceTool()
+    frmIndexBrowser.Show
+End Sub
+
