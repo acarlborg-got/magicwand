@@ -1,0 +1,25 @@
+Option Explicit
+
+Private Sub btnInject_Click()
+    Dim meta As FileMetadata
+    meta.Title = txtTitle.Text
+    meta.Subject = txtSubject.Text
+    meta.Author = txtAuthor.Text
+    meta.Keywords = txtKeywords.Text
+
+    Dim files() As IndexedFile
+    files = GetSelectedIndexedFiles()
+    Dim i As Long
+    For i = 0 To UBound(files)
+        Call WriteMetadata(files(i).filePath, meta)
+    Next i
+    MsgBox "Metadata injected to selected files.", vbInformation
+End Sub
+
+Private Sub UserForm_Initialize()
+    Me.Caption = ":: MagicWand | Metadata"
+    txtTitle.Text = ""
+    txtSubject.Text = ""
+    txtAuthor.Text = ""
+    txtKeywords.Text = ""
+End Sub

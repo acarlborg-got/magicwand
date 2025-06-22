@@ -35,4 +35,17 @@ End Type
 Public IndexedFolders() As IndexedFolder
 Public IndexedFiles() As IndexedFile
 
+' === Insamlad metadata per Wordfil ===
+Public Type FileMetadata
+    Title As String
+    Subject As String
+    Author As String
+    Keywords As String
+    Datum As String
+    Handlaggare As String
+    Konstruktor As String
+End Type
+
+Public MetadataIndex() As FileMetadata
+
 
