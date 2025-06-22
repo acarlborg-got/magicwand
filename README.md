@@ -74,6 +74,10 @@ Development for version 0.3 happens on the `dev` branch while `main` holds the
 stable v0.25 release. Older releases are tagged for easy reference.
 All release notes are stored in `changelog.txt`.
 
+## Additional Documentation
+- [Roadmap](ROADMAP.md)
+- [File Reference](REFERENCE.md)
+
 ## License  
 Internal use only – AFRY Buildings Automation Gothenburg 
 Authored and maintained by internal development team  
