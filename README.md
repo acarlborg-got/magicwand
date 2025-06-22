@@ -1,7 +1,7 @@
 # MagicWand Toolkit  
-**Version:** v0.25b [Stable]  
-**Module:** Search & Replace  
-**Date:** 2025-05-21  
+**Version:** v0.3 [Dev]  
+**Module:** Search & Replace | Index Browser | Metadata Tool  
+**Date:** 2025-06-22  
 
 ## Overview  
 MagicWand is a modular VBA-based automation toolkit designed for advanced document management in Microsoft Word.  
