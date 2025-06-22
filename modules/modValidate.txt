@@ -1,6 +1,7 @@
 
 Option Explicit
 
+' Kontrollerar att användaren gjort säkra val innan bearbetning startar
 Public Function ValidateProcessingSettings() As Boolean
     With frmReplaceTool
         ' Default to valid

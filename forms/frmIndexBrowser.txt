@@ -5,23 +5,28 @@ Option Explicit
 ' === Modulnivåtyper ===
 Private DisplayedFolderIDs() As Long
 
+'  Byter vilket formulär som ska öppnas härnäst
 Private Sub cmbNextForm_Change()
 
 End Sub
 
+' (Ej använd) Klick på etikett
 Private Sub Label1_Click()
 
 End Sub
 
+' Öppnar Teams-chatt med utvecklaren
 Private Sub lblAuthor_Click()
     ' Öppna Teams chatt
     ThisDocument.FollowHyperlink "https://teams.microsoft.com/l/chat/0/0?users=alexander.carlborg@afry.com"
 End Sub
 
+' Händelse när sökvägen ändras
 Private Sub txtRootFolder_Change()
 
 End Sub
 
+' Initierar formuläret och gränssnittet
 Private Sub UserForm_Initialize()
     Me.Caption = GetTitle_frmIndexBrowser()
     lblAppVersion.Caption = GetAppVersion()
@@ -39,6 +44,7 @@ End Sub
 
 
 ' === Browse-klick ===
+' Välj rotmapp för indexering
 Private Sub btnBrowseFolder_Click()
     With Application.FileDialog(msoFileDialogFolderPicker)
         If .Show = -1 Then txtRootFolder.Text = .SelectedItems(1)
@@ -46,6 +52,7 @@ Private Sub btnBrowseFolder_Click()
 End Sub
 
 ' === Index-klick ===
+' Startar indexering av mappar och filer
 Private Sub btnLoad_Click()
     If txtRootFolder.Text = "" Then Exit Sub
     Call IndexFoldersAndFiles(txtRootFolder.Text)
@@ -55,6 +62,7 @@ Private Sub btnLoad_Click()
 End Sub
 
 ' === Lista mappar med indrag ===
+' Visar indexerade mappar i listan
 Private Sub BuildFolderList()
     Dim i As Long, indent As String
     lstFolders.Clear
@@ -74,15 +82,18 @@ Private Sub BuildFolderList()
     lstFolders.MultiSelect = fmMultiSelectMulti
 End Sub
 
+' (Ej använd) Visar versionsinfo
 Private Sub lblAppVersion_Click()
 
 End Sub
 
+' (Ej använd) Klick på statistiketiketten
 Private Sub lblStats_Click()
 
 End Sub
 
 ' === Ändring i mappval ===
+' Uppdaterar filurval när mappval ändras
 Private Sub lstFolders_Change()
     Dim i As Long
     For i = 0 To lstFolders.ListCount - 1
@@ -94,6 +105,7 @@ Private Sub lstFolders_Change()
 End Sub
 
 ' === Visa filer från valda mappar ===
+' Visar filer från valda mappar
 Private Sub UpdateFilesFromSelectedFolders()
     Dim i As Long, j As Long
     listFiles.Clear
@@ -130,6 +142,7 @@ Private Function FileAlreadyListed(lst As MSForms.ListBox, fileName As String) A
 End Function
 
 ' === Ändra valtillstånd i IndexedFiles ===
+' Synkar valda filer med interna listan
 Private Sub listFiles_Change()
     Dim i As Long, j As Long, fname As String
 
@@ -147,6 +160,7 @@ Private Sub listFiles_Change()
 End Sub
 
 ' === Markera fil som vald manuellt ===
+' Sätter valtillstånd för angiven fil
 Private Sub SetFileSelectedStatus(fileName As String, sel As Boolean)
     Dim i As Long
     For i = 0 To UBound(IndexedFiles)
@@ -158,6 +172,7 @@ Private Sub SetFileSelectedStatus(fileName As String, sel As Boolean)
 End Sub
 
 ' === Lägga till valda filer till lstFilesToProcess ===
+' Lägger till markerade filer till processen
 Private Sub btnAddFiles_Click()
     Dim i As Long, fname As String
 
@@ -177,6 +192,7 @@ Private Sub btnAddFiles_Click()
 End Sub
 
 ' === Ta bort valda filer från lstFilesToProcess ===
+' Tar bort markerade filer från processen
 Private Sub btnRemFiles_Click()
     Dim i As Long
     For i = lstFilesToProcess.ListCount - 1 To 0 Step -1
@@ -191,6 +207,7 @@ Private Sub btnRemFiles_Click()
 End Sub
 
 ' === Spara urval till arrays ===
+' Sparar urvalet till globala arrayer
 Private Sub btnSaveSelection_Click()
     Dim i As Long, j As Long
     Dim fCount As Long, dCount As Long
@@ -237,6 +254,7 @@ Private Sub btnSaveSelection_Click()
     cmbNextForm.BackColor = vbWhite                   ' Alltid vit
 
 End Sub
+' Återställer UI när urval ändras
 Private Sub ResetSaveUI()
     lstFilesToProcess.BackColor = vbWhite
     BtnSaveSelection.BackColor = RGB(200, 255, 200)   ' Grön (spara krävs)
@@ -248,6 +266,7 @@ Private Sub ResetSaveUI()
 End Sub
 
 
+' Händelse när listan över filer ändras
 Private Sub lstFilesToProcess_Change()
     Call ResetSaveUI
     Call UpdateStats
@@ -255,6 +274,7 @@ End Sub
 
 
 ' === Statistikruta längst ner ===
+' Räknar antal valda filer och mappar
 Private Sub UpdateStats()
     Dim fCount As Long, dCount As Long
     Dim i As Long, j As Long
@@ -284,6 +304,7 @@ Private Sub UpdateStats()
     lblStats.Caption = fCount & " file(s) selected from " & dCount & " folder(s)."
 End Sub
 
+' Öppnar valt verktyg baserat på urval
 Private Sub btnGo_Click()
     If lstFilesToProcess.ListCount = 0 Then
         MsgBox "No files selected to process.", vbExclamation
@@ -309,6 +330,7 @@ Private Sub btnGo_Click()
     End Select
 End Sub
 
+' (Ej använd) Klick på formulärytan
 Private Sub UserForm_Click()
 End Sub
 

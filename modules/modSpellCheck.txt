@@ -1,6 +1,7 @@
 
 Option Explicit
 
+' Genomsöker valda dokument för stavfel och sammanställer resultat
 Public Sub PreScanSpelling(filePaths() As String, language As String, preserveFolderName As String)
     Dim fallbackLangID As Long
     Select Case LCase(language)
@@ -101,6 +102,7 @@ SkipFile:
     UpdateProgress 1
 End Sub
 
+' Rekursiv hjälpmetod som traverserar mappar och samlar stavfel
 Private Sub ScanSpellingRecursive(folder As Object, fallbackLangID As Long, _
                                   ByRef dict As Object, ByRef fileCount As Long, _
                                   includeSubfolders As Boolean, preserveFolderName As String)
@@ -146,6 +148,7 @@ SkipFile:
     End If
 End Sub
 
+' Uppdaterar listan i användargränssnittet medan stavningen skannas
 Private Sub UpdateSpellingListLive(dict As Object)
     Dim count As Long: count = dict.count
     If count = 0 Then Exit Sub
@@ -178,6 +181,7 @@ Private Sub UpdateSpellingListLive(dict As Object)
     End With
 End Sub
 
+' Anpassar kryssrutor i formuläret baserat på ordets förekomst
 Private Sub SetFieldOptionsForIndex(word As String, index As Long)
     Dim allText As String: allText = ActiveDocument.Content.Text
 
@@ -194,6 +198,7 @@ Private Sub SetFieldOptionsForIndex(word As String, index As Long)
     End If
 End Sub
 
+' Ger förslag på korrekt stavning baserat på Word's ordlista
 Private Function GetSuggestion(word As String, langID As Long) As String
     Dim doc As Document
     Dim rng As Range
@@ -227,6 +232,7 @@ Private Function GetSuggestion(word As String, langID As Long) As String
     End If
 End Function
 
+' Enkelt regex-anrop som returnerar True/False
 Private Function RegexMatch(ByVal inputText As String, ByVal pattern As String) As Boolean
     Dim re As Object
     Set re = CreateObject("VBScript.RegExp")
@@ -236,6 +242,7 @@ Private Function RegexMatch(ByVal inputText As String, ByVal pattern As String) 
     RegexMatch = re.Test(inputText)
 End Function
 
+' Returnerar det minsta av två heltal
 Private Function Min(a As Long, b As Long) As Long
     If a < b Then Min = a Else Min = b
 End Function

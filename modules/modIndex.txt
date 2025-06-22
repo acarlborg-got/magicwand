@@ -1,6 +1,7 @@
 
 Option Explicit
 
+' Skapar en lista över alla mappar och Word-dokument i en angiven rot
 Public Sub IndexFoldersAndFiles(rootPath As String)
     Dim fso As Object, stack As Collection
     Dim folder As Object, file As Object, subFolder As Object
@@ -53,6 +54,7 @@ Public Sub IndexFoldersAndFiles(rootPath As String)
     Loop
 End Sub
 
+' Returnerar bara mappnamnet från en fullständig sökväg
 Public Function GetIndexedFolderName(fullPath As String) As String
     GetIndexedFolderName = Mid(fullPath, InStrRev(fullPath, "\") + 1)
 End Function

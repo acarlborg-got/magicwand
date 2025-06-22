@@ -3,6 +3,7 @@ Option Explicit
 ' ##############################################
 ' ## Statusuppdatering i formulär
 ' ##############################################
+' Uppdaterar status, progress och statistikfält i GUI:t
 Public Sub UpdateStatus(statusText As String, Optional progressText As String = "", Optional statsText As String = "")
     On Error Resume Next
     If VBA.UserForms.count > 0 Then
@@ -37,6 +38,7 @@ End Sub
 ' ##############################################
 ' ## Statusbar i formulär
 ' ##############################################
+' Visar en progressbar med värde 0-1
 Public Sub UpdateProgress(progress As Double)
     On Error Resume Next
     If VBA.UserForms.count > 0 Then

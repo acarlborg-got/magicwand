@@ -1,6 +1,7 @@
 
 Option Explicit
 
+' Global flagg för att avbryta pågående processer
 Public cancelRequested As Boolean
 
 
