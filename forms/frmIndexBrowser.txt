@@ -199,12 +199,20 @@ Private Sub btnSaveSelection_Click()
     Erase selectedFiles
     Erase selectedFolders
 
+    ' Ensure arrays are initialized before using ReDim Preserve
+    fCount = 0
+    dCount = 0
+
     For i = 0 To lstFilesToProcess.ListCount - 1
         fname = lstFilesToProcess.List(i)
 
         For j = 0 To UBound(IndexedFiles)
             If IndexedFiles(j).fileName = fname Then
-                ReDim Preserve selectedFiles(fCount)
+                If fCount = 0 Then
+                    ReDim selectedFiles(0)
+                Else
+                    ReDim Preserve selectedFiles(fCount)
+                End If
                 selectedFiles(fCount).fileName = IndexedFiles(j).fileName
                 selectedFiles(fCount).parentID = IndexedFiles(j).parentFolderID
                 selectedFiles(fCount).filePath = IndexedFiles(j).filePath
@@ -220,7 +228,11 @@ Private Sub btnSaveSelection_Click()
 
     Dim key As Variant
     For Each key In folderIDsDict.keys
-        ReDim Preserve selectedFolders(dCount)
+        If dCount = 0 Then
+            ReDim selectedFolders(0)
+        Else
+            ReDim Preserve selectedFolders(dCount)
+        End If
         selectedFolders(dCount) = IndexedFolders(folderIDsDict(key))
         dCount = dCount + 1
     Next key
