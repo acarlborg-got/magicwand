@@ -34,7 +34,8 @@ It is built to support professional workflows in environments with heavy documen
 1. Place `MagicWand.dotm` in a shared folder synced via OneDrive (SharePoint recommended)  
 2. Load the .dotm file into Word via Add-ins:  
    `File → Options → Add-ins → Word Add-ins → Add...`  
-3. The form launches automatically or via the macro: `ShowReplaceTool`  
+3. The form launches automatically or via the macro: `ReplaceTool` (the
+   legacy `ShowReplaceTool` still works as an alias)
 4. Choose folder, language, and options  
 5. Run search/replace or spellcheck across multiple documents  
 

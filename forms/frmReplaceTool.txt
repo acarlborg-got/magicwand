@@ -1,3 +1,4 @@
+Option Explicit
 
 
 Private Sub btnBrowsePDFPath_Click()

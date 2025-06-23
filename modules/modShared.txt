@@ -1,9 +1,10 @@
+Option Explicit
+
+' === modIndexShared – Delning av sparat urval mellan formulär ===
 
 Public Function GetIndexedFiles() As Variant
     GetIndexedFiles = selectedFiles  ' tFileSelection() från frmIndexBrowser
 End Function
-' === modIndexShared – Delning av sparat urval mellan formulär ===
-Option Explicit
 
 ' Sparade urval från frmIndexBrowser
 Public selectedFiles() As tFileSelection
@@ -61,7 +62,7 @@ End Function
 Public Function GetSelectedIndexedFiles() As IndexedFile()
     Dim result() As IndexedFile
     Dim i As Long, j As Long
-    Dim count As Long: count = 0
+    Dim count As Long
 
     If (Not Not selectedFiles) = False Then
         ReDim result(0)
@@ -69,18 +70,28 @@ Public Function GetSelectedIndexedFiles() As IndexedFile()
         Exit Function
     End If
 
+    count = 0
+    ' Preallocate to maximum possible size to avoid invalid ReDim Preserve
+    ReDim result(UBound(selectedFiles))
+
     For i = 0 To UBound(selectedFiles)
         For j = 0 To UBound(IndexedFiles)
             If IndexedFiles(j).fileName = selectedFiles(i).fileName And _
                IndexedFiles(j).parentFolderID = selectedFiles(i).parentID Then
 
-                ReDim Preserve result(count)
                 result(count) = IndexedFiles(j)
                 count = count + 1
                 Exit For
             End If
         Next j
     Next i
+
+    ' Trim the array to actual results
+    If count = 0 Then
+        ReDim result(0)
+    Else
+        ReDim Preserve result(count - 1)
+    End If
 
     GetSelectedIndexedFiles = result
 End Function

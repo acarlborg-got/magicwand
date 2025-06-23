@@ -1,3 +1,4 @@
+Option Explicit
 
 
 ' === Modulnivåtyper ===
@@ -199,12 +200,21 @@ Private Sub btnSaveSelection_Click()
     Erase selectedFiles
     Erase selectedFolders
 
+    fCount = 0
+    dCount = 0
+
+    ' Preallocate array to maximum needed size
+    If lstFilesToProcess.ListCount > 0 Then
+        ReDim selectedFiles(lstFilesToProcess.ListCount - 1)
+    Else
+        ReDim selectedFiles(0)
+    End If
+
     For i = 0 To lstFilesToProcess.ListCount - 1
         fname = lstFilesToProcess.List(i)
 
         For j = 0 To UBound(IndexedFiles)
             If IndexedFiles(j).fileName = fname Then
-                ReDim Preserve selectedFiles(fCount)
                 selectedFiles(fCount).fileName = IndexedFiles(j).fileName
                 selectedFiles(fCount).parentID = IndexedFiles(j).parentFolderID
                 selectedFiles(fCount).filePath = IndexedFiles(j).filePath
@@ -218,12 +228,31 @@ Private Sub btnSaveSelection_Click()
         Next j
     Next i
 
+    ' Trim file array to actual count
+    If fCount = 0 Then
+        ReDim selectedFiles(0)
+    Else
+        ReDim Preserve selectedFiles(fCount - 1)
+    End If
+
     Dim key As Variant
+    If folderIDsDict.Count > 0 Then
+        ReDim selectedFolders(folderIDsDict.Count - 1)
+    Else
+        ReDim selectedFolders(0)
+    End If
+
     For Each key In folderIDsDict.keys
-        ReDim Preserve selectedFolders(dCount)
         selectedFolders(dCount) = IndexedFolders(folderIDsDict(key))
         dCount = dCount + 1
     Next key
+
+    ' Trim folder array
+    If dCount = 0 Then
+        ReDim selectedFolders(0)
+    Else
+        ReDim Preserve selectedFolders(dCount - 1)
+    End If
    
     ' === Visuell feedback när sparat ===
     lstFilesToProcess.BackColor = RGB(240, 240, 240)  ' Grå (sparad)
@@ -294,13 +323,13 @@ Private Sub btnGo_Click()
     ' Öppna rätt formulär
     Select Case cmbNextForm.Value
         Case "Search & Replace"
-            frmReplaceTool.Show
+            ShowFormSafe "frmReplaceTool"
 
         Case "Metadata injection"
-            frmMetadata.Show
+            ShowFormSafe "frmMetadata"
 
         Case "Format cleanup"
-            frmFormatter.Show
+            ShowFormSafe "frmFormatter"
 
         Case Else
             MsgBox "Please select a module to continue.", vbInformation
