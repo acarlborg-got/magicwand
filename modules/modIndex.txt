@@ -1,3 +1,4 @@
+Option Explicit
 
 Public Sub IndexFoldersAndFiles(rootPath As String)
     Dim fso As Object, stack As Collection
