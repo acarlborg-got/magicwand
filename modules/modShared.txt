@@ -1,9 +1,10 @@
+Option Explicit
+
+' === modIndexShared – Delning av sparat urval mellan formulär ===
 
 Public Function GetIndexedFiles() As Variant
     GetIndexedFiles = selectedFiles  ' tFileSelection() från frmIndexBrowser
 End Function
-' === modIndexShared – Delning av sparat urval mellan formulär ===
-Option Explicit
 
 ' Sparade urval från frmIndexBrowser
 Public selectedFiles() As tFileSelection
