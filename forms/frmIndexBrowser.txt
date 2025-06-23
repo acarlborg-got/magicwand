@@ -294,13 +294,13 @@ Private Sub btnGo_Click()
     ' Öppna rätt formulär
     Select Case cmbNextForm.Value
         Case "Search & Replace"
-            frmReplaceTool.Show
+            ShowFormSafe "frmReplaceTool"
 
         Case "Metadata injection"
-            frmMetadata.Show
+            ShowFormSafe "frmMetadata"
 
         Case "Format cleanup"
-            frmFormatter.Show
+            ShowFormSafe "frmFormatter"
 
         Case Else
             MsgBox "Please select a module to continue.", vbInformation
