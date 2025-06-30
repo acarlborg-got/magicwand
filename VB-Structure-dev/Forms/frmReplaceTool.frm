@@ -15,7 +15,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub btnBrowsePDFPath_Click()
     With Application.FileDialog(msoFileDialogFolderPicker)
-        .Title = "Välj alternativ PDF-mapp"
+        .Title = "VÃ¤lj alternativ PDF-mapp"
         If .Show = -1 Then
             txtAltPDFPath.text = .SelectedItems(1)
         End If
@@ -27,33 +27,13 @@ Private Sub btnStart_Click()
     StartProcessing
 End Sub
 
-Private Sub StartProcessing()
-    Dim findTexts(1 To 5) As String
-    Dim replaceTexts(1 To 5) As String
-    Dim caseFlags(1 To 5) As Boolean
-    Dim wordFlags(1 To 5) As Boolean
-    Dim i As Long
-
-    For i = 1 To 5
-        findTexts(i) = Me.Controls("txtFind" & i).text
-        replaceTexts(i) = Me.Controls("txtReplace" & i).text
-        caseFlags(i) = Me.Controls("chkCase" & i).Value
-        wordFlags(i) = Me.Controls("chkWhole" & i).Value
-    Next i
-
-    ProcessIndexedDocuments findTexts, replaceTexts, caseFlags, wordFlags, _
-        Me.chkExportPDF.Value, Me.cmbPDFType.text, Me.txtAltPDFPath.text, _
-        Me.txtPrefix.text, Me.txtSuffix.text, Me.chkKeepOriginal.Value, _
-        Me.cmbLanguage.text
-End Sub
-
 Private Sub btnCancel_Click()
     cancelRequested = True
     lblStatus2.Caption = "Status: Aborting..."
 End Sub
 
 Private Sub btnSpellcheck_Click()
-    ' Rensa alla tidigare sök-/ersättfält och listan
+    ' Rensa alla tidigare sÃ¶k-/ersÃ¤ttfÃ¤lt och listan
     Dim i As Long
     For i = 1 To 5
         Me.Controls("txtFind" & i).text = ""
@@ -63,7 +43,7 @@ Private Sub btnSpellcheck_Click()
     Next i
     Me.lstSpellingResult.Clear
 
-' === Kör stavningsanalysen på indexerade filer ===
+' === KÃ¶r stavningsanalysen pÃ¥ indexerade filer ===
 Dim filePaths() As String
 filePaths = GetSelectedFilePaths()
 
@@ -93,7 +73,7 @@ Private Sub lblAppVersion_Click()
 End Sub
 
 Private Sub lblAuthor_Click()
-    ' Öppna Teams chatt
+    ' Ã–ppna Teams chatt
     ThisDocument.FollowHyperlink "https://teams.microsoft.com/l/chat/0/0?users=alexander.carlborg@afry.com"
 End Sub
 
@@ -131,7 +111,7 @@ Private Sub UserForm_Initialize()
     lblStats.Caption = ""
     lblProgressBar.Width = 0
 
-    ' === Läs in sparade filer från frmIndexBrowser ===
+    ' === LÃ¤s in sparade filer frÃ¥n frmIndexBrowser ===
     Dim files() As tFileSelection
     Dim fileCount As Long
 
