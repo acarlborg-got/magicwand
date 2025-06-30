@@ -1,7 +1,7 @@
 Attribute VB_Name = "modReplace"
 Option Explicit
 
-' === modReplace – Behandling av filer från index ===
+' === modReplace â€“ Behandling av filer frÃ¥n index ===
 Public Sub ProcessIndexedDocuments(findTexts() As String, replaceTexts() As String, _
     caseFlags() As Boolean, wordFlags() As Boolean, exportPDF As Boolean, exportPDFType As String, _
     altPDFPath As String, prefix As String, suffix As String, keepOriginal As Boolean, language As String)
@@ -25,6 +25,8 @@ Public Sub ProcessIndexedDocuments(findTexts() As String, replaceTexts() As Stri
     logFile = CreateLogFile(logPath)
     errorLogFile = CreateLogFile(errorLogPath)
 
+    Call UpdateProgress(0)
+
     For i = 0 To UBound(fileList)
         DoEvents
         If cancelRequested Then Exit For
@@ -36,7 +38,7 @@ Public Sub ProcessIndexedDocuments(findTexts() As String, replaceTexts() As Stri
         UpdateProgress fileCount / (UBound(fileList) + 1)
 
         Set doc = Documents.Open(fileList(i).filePath, ReadOnly:=False, Visible:=False)
-
+                Call UpdateProgress((i + 1) / (UBound(fileList) + 1))
         Dim j As Long, replacementsInDoc As Long
         For j = 1 To 5
             If findTexts(j) <> "" Then
@@ -73,6 +75,8 @@ Public Sub ProcessIndexedDocuments(findTexts() As String, replaceTexts() As Stri
         doc.Close SaveChanges:=False
 ContinueLoop:
     Next i
+
+Call UpdateProgress(1)
 
     Close #logFile
     Close #errorLogFile
