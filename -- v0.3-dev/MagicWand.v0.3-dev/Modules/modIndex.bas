@@ -1,0 +1,58 @@
+Attribute VB_Name = "modIndex"
+Public Sub IndexFoldersAndFiles(rootPath As String)
+    Dim fso As Object, stack As Collection
+    Dim folder As Object, file As Object, subFolder As Object
+    Dim folderCount As Long, fileCount As Long, folderDepth As Long
+
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set stack = New Collection
+    stack.Add rootPath
+
+    folderCount = 0: fileCount = 0
+    ReDim IndexedFolders(0)
+    ReDim IndexedFiles(0)
+
+    Do While stack.count > 0
+        Dim currentPath As String
+        currentPath = stack(1)
+        stack.Remove 1
+
+        folderDepth = UBound(Split(currentPath, "\")) - UBound(Split(rootPath, "\"))
+
+        ReDim Preserve IndexedFolders(folderCount)
+        With IndexedFolders(folderCount)
+            .ID = folderCount
+            .folderPath = currentPath
+            .depth = folderDepth
+            .selected = False
+        End With
+        folderCount = folderCount + 1
+
+        Set folder = fso.GetFolder(currentPath)
+        For Each file In folder.files
+            If LCase(Right(file.Name, 5)) = ".docx" Or LCase(Right(file.Name, 4)) = ".doc" Then
+                ReDim Preserve IndexedFiles(fileCount)
+                With IndexedFiles(fileCount)
+                    .ID = fileCount
+                    .filePath = file.path
+                    .fileName = file.Name
+                    .extension = fso.GetExtensionName(file.Name)
+                    .parentFolderID = folderCount - 1
+                    .lastModified = file.DateLastModified
+                    .selected = False
+                End With
+                fileCount = fileCount + 1
+            End If
+        Next
+
+        For Each subFolder In folder.SubFolders
+            stack.Add subFolder.path
+        Next
+    Loop
+End Sub
+
+Public Function GetIndexedFolderName(fullPath As String) As String
+    GetIndexedFolderName = Mid(fullPath, InStrRev(fullPath, "\") + 1)
+End Function
+
+
