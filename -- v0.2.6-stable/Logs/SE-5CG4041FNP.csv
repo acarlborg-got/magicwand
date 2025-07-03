@@ -1,0 +1,6 @@
+Timestamp;User;Version;ActionType;FolderPath;Subfolders;PDFExport;PDFType;AltPDFPathUsed;PreserveOriginals;FilesProcessed;ReplacementsMade;PDFsGenerated;DurationSeconds;Notes
+2025-07-02 17:03:44;tyo148;v0.26 [Stable];FindDates;C:\Users\tyo148\OneDrive - AFRY\Documents\10531 Brewhouse;True;False;N/A;False;False;4;0;0;3;Lang=N/A
+2025-07-02 17:07:39;tyo148;v0.26 [Stable];FindDates;C:\Users\tyo148\OneDrive - AFRY\Documents\STEGRA LOCAL WORK\AUB10;False;False;N/A;False;False;14;0;0;11;Lang=N/A
+2025-07-02 17:09:27;tyo148;v0.26 [Stable];FindDates;C:\Users\tyo148\OneDrive - AFRY\Documents\STEGRA LOCAL WORK\AUB10;False;False;N/A;False;False;14;0;0;11;Lang=N/A
+2025-07-02 17:11:58;tyo148;v0.26 [Stable];Replace+PDF;C:\Users\tyo148\OneDrive - AFRY\Documents\STEGRA LOCAL WORK\AUB10;False;True;Normal;True;True;14;14;14;85;Suffix=
+2025-07-02 17:24:56;tyo148;v0.26 [Stable];FindDates;C:\Users\tyo148\OneDrive - AFRY\Documents\91546 Konserthuset;True;False;N/A;False;False;2;0;0;3;Lang=N/A

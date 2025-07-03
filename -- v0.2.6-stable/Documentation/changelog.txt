@@ -1,0 +1,67 @@
+MagicWand - Changelog  
+======================  
+
+v0.3b | In Development  
+----------------------  
+- Dynamic handling of Find & Replace rows  
+- "+" and "–" buttons to add/remove pairs on the fly  
+- Automatic row creation during spellcheck  
+- Framework for future rule engine (Operation Card vs Technical Description)  
+- Project/type/language-based template selector planned  
+- Initial support for language-specific rules and field replacement  
+- Preparation for multilingual distribution  
+
+v0.26 [2025-07-02] – Date Scanner + Efficiency Stats  
+----------------------------------------------------  
+- NEW: "Find Dates" button detects ISO-formatted and placeholder dates (e.g., 2023-05-XX)  
+- NEW: Global and personal usage statistics with estimated time saved  
+- ENHANCED: Full document scanning (main text, headers, footers, footnotes, textboxes)  
+- ENHANCED: CSV logging now includes all settings and is user-specific  
+- GUI: "Find Dates (YYYY-MM-DD)" button added beside spellcheck  
+- Regex pattern improved for flexible digit and placeholder matching (e.g., xx, XX)  
+- FOUND dates are live-displayed in `lstSpellingResult`, sorted by frequency  
+- TOP 5 found dates populate txtFind1–5 and txtReplace1–5 fields  
+- Default replacement suggestion: today’s date  
+- Based on the same engine as spellcheck — modular and maintainable  
+- FIXED: Minor issues in file loop and GUI responsiveness  
+
+v0.25b [Stable] | 2025-05-21  
+----------------------------  
+- Full rewrite of PreScanSpelling module  
+- Live updates during scanning: filename, progress, status  
+- Honors include-subfolder setting  
+- Preserve folder excluded from scans to prevent recursion  
+- Real-time results shown in `lstSpellingResult`, sorted by frequency  
+- Top 5 spelling issues populate replace fields automatically  
+- Case and Whole Word checkboxes intelligently pre-evaluated  
+- Handles empty results gracefully  
+- Exports word frequency list to `MagicWand_Spelling.txt`  
+- Code hardened for production deployment  
+- SharePoint-compatible via OneDrive sync  
+
+v0.2b | 2025-05-19  
+------------------  
+- Spellcheck with language selection  
+- Automatic population of replace fields from spelling issues  
+- Per-word case and whole-word analysis  
+- Progress bar with percentage feedback  
+- PDF export with prefix/suffix and PDF/A-1b option  
+- Preserve original files in a designated subfolder  
+- Version and changelog displayed in GUI  
+- Versioning centralized in code  
+- Local text-based logging and error handling  
+- Resilient to corrupt or locked files  
+
+v0.1b – 2025-05-10  
+------------------  
+- Core Find & Replace logic for multiple Word files  
+- Basic logging and status feedback  
+- PDF export for modified files only  
+- Static 5-row Find/Replace setup  
+- Case-sensitive and whole-word toggles per row  
+
+v0.1a – Internal Dev  
+--------------------  
+- First GUI prototype  
+- Planning of core modules  
+- Initial testing with Word VBA APIs  
